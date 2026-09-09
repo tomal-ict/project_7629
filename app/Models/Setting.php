@@ -1,0 +1,22 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class Setting extends Model
+{
+    protected $fillable = ['key', 'value', 'group'];
+
+    public $timestamps = true;
+
+    public static function get(string $key, mixed $default = null): mixed
+    {
+        return static::where('key', $key)->value('value') ?? $default;
+    }
+
+    public static function allAsArray(): array
+    {
+        return static::pluck('value', 'key')->toArray();
+    }
+}

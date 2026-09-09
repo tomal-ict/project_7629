@@ -1,0 +1,10 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # If the request already points inside public/, let Apache serve it directly.
+    RewriteCond %{REQUEST_URI} /public/
+    RewriteRule ^ - [L]
+
+    # Everything else goes through the Laravel public directory (front controller).
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>
