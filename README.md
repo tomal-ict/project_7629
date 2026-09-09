@@ -19,7 +19,7 @@ The project is designed to run on any Apache/MySQL host **without typing a singl
    DB_CONNECTION=mysql
    DB_HOST=127.0.0.1
    DB_PORT=3306
-   DB_DATABASE=agm_web_site
+   DB_DATABASE=demo
    DB_USERNAME=root
    DB_PASSWORD=
    ```
