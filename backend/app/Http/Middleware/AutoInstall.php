@@ -18,6 +18,12 @@ class AutoInstall
             try {
                 $this->generateAppKey();
 
+                // If user imported database (e.g. demo.sql), verify and mark installed immediately
+                if (Schema::hasTable('settings') && \App\Models\Setting::query()->exists()) {
+                    @file_put_contents($marker, date('c'));
+                    return $next($request);
+                }
+
                 $this->ensureDatabaseExists();
 
                 if (! Schema::hasTable('settings')) {
@@ -26,12 +32,12 @@ class AutoInstall
                 }
 
                 if (\App\Models\Setting::query()->exists()) {
-                    file_put_contents($marker, date('c'));
+                    @file_put_contents($marker, date('c'));
                 } else {
                     Artisan::call('db:seed', ['--force' => true]);
 
                     if (\App\Models\Setting::query()->exists()) {
-                        file_put_contents($marker, date('c'));
+                        @file_put_contents($marker, date('c'));
                     }
                 }
             } catch (Throwable $e) {
