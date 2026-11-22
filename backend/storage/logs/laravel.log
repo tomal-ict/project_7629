@@ -1097,3 +1097,31 @@ Stack trace:
 [stacktrace]
 #0 {main}
 "} 
+[2026-11-22 07:24:07] local.ERROR: Unexpected end of input {"exception":"[object] (InvalidArgumentException(code: 0): Unexpected end of input at D:/xampp/htdocs/1_AGM/project_7629/backend/vendor/psy/psysh/src/Shell.php:1516)
+[stacktrace]
+#0 D:/xampp/htdocs/1_AGM/project_7629/backend/vendor/psy/psysh/src/Shell.php(2215): Psy/Shell->setCode('echo App//Models...', true)
+#1 D:/xampp/htdocs/1_AGM/project_7629/backend/vendor/laravel/tinker/src/Console/TinkerCommand.php(77): Psy/Shell->execute('echo App//Models...')
+#2 D:/xampp/htdocs/1_AGM/project_7629/backend/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(36): Laravel/Tinker/Console/TinkerCommand->handle()
+#3 D:/xampp/htdocs/1_AGM/project_7629/backend/vendor/laravel/framework/src/Illuminate/Container/Util.php(43): Illuminate/Container/BoundMethod::Illuminate/Container/{closure}()
+#4 D:/xampp/htdocs/1_AGM/project_7629/backend/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(96): Illuminate/Container/Util::unwrapIfClosure(Object(Closure))
+#5 D:/xampp/htdocs/1_AGM/project_7629/backend/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(35): Illuminate/Container/BoundMethod::callBoundMethod(Object(Illuminate/Foundation/Application), Array, Object(Closure))
+#6 D:/xampp/htdocs/1_AGM/project_7629/backend/vendor/laravel/framework/src/Illuminate/Container/Container.php(799): Illuminate/Container/BoundMethod::call(Object(Illuminate/Foundation/Application), Array, Array, NULL)
+#7 D:/xampp/htdocs/1_AGM/project_7629/backend/vendor/laravel/framework/src/Illuminate/Console/Command.php(211): Illuminate/Container/Container->call(Array)
+#8 D:/xampp/htdocs/1_AGM/project_7629/backend/vendor/symfony/console/Command/Command.php(341): Illuminate/Console/Command->execute(Object(Symfony/Component/Console/Input/ArgvInput), Object(Illuminate/Console/OutputStyle))
+#9 D:/xampp/htdocs/1_AGM/project_7629/backend/vendor/laravel/framework/src/Illuminate/Console/Command.php(180): Symfony/Component/Console/Command/Command->run(Object(Symfony/Component/Console/Input/ArgvInput), Object(Illuminate/Console/OutputStyle))
+#10 D:/xampp/htdocs/1_AGM/project_7629/backend/vendor/symfony/console/Application.php(1117): Illuminate/Console/Command->run(Object(Symfony/Component/Console/Input/ArgvInput), Object(Symfony/Component/Console/Output/ConsoleOutput))
+#11 D:/xampp/htdocs/1_AGM/project_7629/backend/vendor/symfony/console/Application.php(356): Symfony/Component/Console/Application->doRunCommand(Object(Laravel/Tinker/Console/TinkerCommand), Object(Symfony/Component/Console/Input/ArgvInput), Object(Symfony/Component/Console/Output/ConsoleOutput))
+#12 D:/xampp/htdocs/1_AGM/project_7629/backend/vendor/symfony/console/Application.php(195): Symfony/Component/Console/Application->doRun(Object(Symfony/Component/Console/Input/ArgvInput), Object(Symfony/Component/Console/Output/ConsoleOutput))
+#13 D:/xampp/htdocs/1_AGM/project_7629/backend/vendor/laravel/framework/src/Illuminate/Foundation/Console/Kernel.php(198): Symfony/Component/Console/Application->run(Object(Symfony/Component/Console/Input/ArgvInput), Object(Symfony/Component/Console/Output/ConsoleOutput))
+#14 D:/xampp/htdocs/1_AGM/project_7629/backend/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(1235): Illuminate/Foundation/Console/Kernel->handle(Object(Symfony/Component/Console/Input/ArgvInput), Object(Symfony/Component/Console/Output/ConsoleOutput))
+#15 D:/xampp/htdocs/1_AGM/project_7629/backend/artisan(16): Illuminate/Foundation/Application->handleCommand(Object(Symfony/Component/Console/Input/ArgvInput))
+#16 {main}
+"} 
+[2026-11-22 07:24:40] local.ERROR: Call to undefined method App\Models\Setting::set() {"exception":"[object] (BadMethodCallException(code: 0): Call to undefined method App\\Models\\Setting::set() at D:/xampp/htdocs/1_AGM/project_7629/backend/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:67)
+[stacktrace]
+#0 D:/xampp/htdocs/1_AGM/project_7629/backend/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php(36): Illuminate/Database/Eloquent/Model::throwBadMethodCallException('set')
+#1 D:/xampp/htdocs/1_AGM/project_7629/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php(2544): Illuminate/Database/Eloquent/Model->forwardCallTo(Object(Illuminate/Database/Eloquent/Builder), 'set', Array)
+#2 D:/xampp/htdocs/1_AGM/project_7629/backend/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php(2560): Illuminate/Database/Eloquent/Model->__call('set', Array)
+#3 D:/xampp/htdocs/1_AGM/project_7629/backend/update_hero.php(7): Illuminate/Database/Eloquent/Model::__callStatic('set', Array)
+#4 {main}
+"} 

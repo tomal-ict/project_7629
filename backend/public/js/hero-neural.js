@@ -1,13 +1,13 @@
 /* ============================================================
-   ABC AI SYSTEM — 3D CYBER-CRYSTAL & AUTONOMOUS ROBOTIC PERCEPTION CORE (v6)
-   Next-Gen Clean Sci-Fi Visualization:
-   • 3D Polyhedral Geodesic Crystal (Nested Icosahedron & Dodecahedron)
-   • Data Packets (Photons) gliding smoothly along crystalline neural struts
-   • Robotic Sensor Iris with Mechanical Aperture & Interactive Mouse Pupil Tracking
-   • Concentric Gyroscopic Armature Rings with Angle Marks & Comet Satellites
-   • Harmonic Neural Reasoning Waveform (Sinusoidal transformer frequency ring)
-   • Soft 360° LiDAR Spatial Sweep (Dynamic optical illumination)
-   • Clean, Minimalist High-Precision HUD — Zero visual clutter, pure mathematical beauty.
+   HERO — DEEP NEURAL CORE (v3)
+   Advanced digital AI visualization, fully procedural:
+   • 3D tumbling neural lattice (Fibonacci sphere + KNN edges)
+   • live signals racing along edges with glow trails
+   • true 3D orbit rings with comets
+   • binary code-rain backdrop + holographic floor grid
+   • energy shockwaves, scan sweep, telemetry ticker
+   • live AI metrics + mouse parallax
+   No pictures — pure canvas math.
    ============================================================ */
 (function (global) {
   'use strict';
@@ -26,552 +26,543 @@
     if (!ctx) return;
 
     var reduced = false;
-    try {
-      reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    } catch (e) {}
+    try { reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
 
     var DPR = Math.min(window.devicePixelRatio || 1, 2);
-    var W = 470, H = 470, CX = 235, CY = 235;
-    var running = false, raf = 0, startT = 0;
-    var MOUSE = { x: 0, y: 0, tx: 0, ty: 0, pupilX: 0, pupilY: 0 };
+    var W = 468, H = 468, CX = 234, CY = 236, R = 154;
+    var running = false, raf = 0, startT = 0, tick = 0;
+    var PAR = { x: 0, y: 0, tx: 0, ty: 0 };
 
-    /* ============ 1. MATHEMATICAL 3D ICOSAHEDRON (CYBER-CRYSTAL) ============ */
-    var PHI = (1 + Math.sqrt(5)) / 2; // Golden ratio ~1.618
-    var RAW_VERTS = [
-      [-1,  PHI, 0], [ 1,  PHI, 0], [-1, -PHI, 0], [ 1, -PHI, 0],
-      [ 0, -1,  PHI], [ 0,  1,  PHI], [ 0, -1, -PHI], [ 0,  1, -PHI],
-      [ PHI, 0, -1], [ PHI, 0,  1], [-PHI, 0, -1], [-PHI, 0,  1]
+    var PAL = [
+      [6, 182, 212],   /* cyan   */
+      [37, 99, 235],   /* blue   */
+      [79, 70, 229],   /* indigo */
+      [124, 58, 237],  /* violet */
+      [16, 185, 129]   /* emerald*/
     ];
+    var CORE0 = [14, 165, 233];   /* vivid cyan core */
 
-    // Normalize vertices to unit sphere
-    var VERTS = [];
-    for (var i = 0; i < RAW_VERTS.length; i++) {
-      var v = RAW_VERTS[i];
-      var len = Math.sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
-      VERTS.push([v[0] / len, v[1] / len, v[2] / len]);
-    }
+    /* ============ geometry ============ */
+    var NODES = [], LINKS = [], SIGS = [];
+    var LAT_R = 0.66;               /* lattice radius as fraction of R */
 
-    // Connect edges between all vertex pairs with distance ~ 1.051
-    var EDGES = [];
-    for (i = 0; i < VERTS.length; i++) {
-      for (var j = i + 1; j < VERTS.length; j++) {
-        var dx = VERTS[i][0] - VERTS[j][0];
-        var dy = VERTS[i][1] - VERTS[j][1];
-        var dz = VERTS[i][2] - VERTS[j][2];
-        var dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
-        if (dist > 0.95 && dist < 1.15) {
-          EDGES.push([i, j]);
+    function buildLattice() {
+      var n = 168;
+      var ga = Math.PI * (3 - Math.sqrt(5));
+      NODES = [];
+      for (var i = 0; i < n; i++) {
+        var yv = 1 - (i / (n - 1)) * 2;          /* -1..1 */
+        var rad = Math.sqrt(Math.max(0, 1 - yv * yv));
+        var th = ga * i;
+        var depth = 0.5 + 0.5 * Math.abs(yv);    /* polar denser */
+        NODES.push({
+          x: Math.cos(th) * rad,
+          y: yv * 0.94,
+          z: Math.sin(th) * rad,
+          col: mixCol(CORE0, [139, 92, 246], depth * 0.55)
+        });
+      }
+      /* KNN edges (cap degree 4) */
+      var deg = new Array(n).fill(0);
+      LINKS = [];
+      var cands = [];
+      for (i = 0; i < n; i++) {
+        for (var j = i + 1; j < n; j++) {
+          var dx = NODES[i].x - NODES[j].x;
+          var dy = NODES[i].y - NODES[j].y;
+          var dz = NODES[i].z - NODES[j].z;
+          cands.push([i, j, dx * dx + dy * dy + dz * dz]);
         }
+      }
+      cands.sort(function (a, b) { return a[2] - b[2]; });
+      for (i = 0; i < cands.length; i++) {
+        var a = cands[i][0], b = cands[i][1];
+        if (deg[a] >= 4 || deg[b] >= 4) continue;
+        LINKS.push([a, b]);
+        deg[a]++; deg[b]++;
       }
     }
 
-    // Inner Core Octahedron (Nested Transformer Lattice)
-    var INNER_RAW = [
-      [1, 0, 0], [-1, 0, 0],
-      [0, 1, 0], [0, -1, 0],
-      [0, 0, 1], [0, 0, -1]
-    ];
-    var INNER_EDGES = [
-      [0, 2], [2, 1], [1, 3], [3, 0], // Equator
-      [4, 0], [4, 1], [4, 2], [4, 3], // Top pyramid
-      [5, 0], [5, 1], [5, 2], [5, 3]  // Bottom pyramid
-    ];
-
-    /* ============ 2. DATA PACKET PHOTONS GLIDING ON EDGES ============ */
-    var PACKETS = [];
-    for (var p = 0; p < 14; p++) {
-      PACKETS.push({
-        edge: Math.floor(Math.random() * EDGES.length),
-        prog: Math.random(),
-        spd: 0.008 + Math.random() * 0.012,
-        forward: Math.random() > 0.5,
-        col: p % 2 === 0 ? [6, 182, 212] : [96, 165, 250]
-      });
+    function mixCol(c1, c2, t) {
+      return [
+        Math.round(c1[0] + (c2[0] - c1[0]) * t),
+        Math.round(c1[1] + (c2[1] - c1[1]) * t),
+        Math.round(c1[2] + (c2[2] - c1[2]) * t)
+      ];
     }
 
-    /* ============ 3. 3D PROJECTION WITH SPRING PARALLAX ============ */
-    function project3D(x, y, z, rotX, rotY, rotZ, scale) {
-      // Rotation around X
-      var cosX = Math.cos(rotX), sinX = Math.sin(rotX);
-      var y1 = y * cosX - z * sinX;
-      var z1 = y * sinX + z * cosX;
+    /* 3D rings — each defined by a tilt axis; tumble with the lattice */
+    var RINGDEF = [
+      { r: 1.28, axis: [1, 0.4, 0.2], spin: 0.55, col: [6, 182, 212] },
+      { r: 1.60, axis: [-0.4, 1, 0.3], spin: -0.4, col: [79, 70, 229] },
+      { r: 1.92, axis: [0.3, -0.5, 1], spin: 0.3, col: [16, 185, 129] }
+    ];
 
-      // Rotation around Y
-      var cosY = Math.cos(rotY), sinY = Math.sin(rotY);
-      var x2 = x * cosY + z1 * sinY;
-      var z2 = -x * sinY + z1 * cosY;
-
-      // Rotation around Z
-      var cosZ = Math.cos(rotZ), sinZ = Math.sin(rotZ);
-      var x3 = x2 * cosZ - y1 * sinZ;
-      var y3 = x2 * sinZ + y1 * cosZ;
-
-      // Perspective projection
-      var cameraDist = 3.2;
-      var fov = cameraDist / (cameraDist - z2 * 0.7);
+    /* ============ projection ============ */
+    var PROJ = { rotY: 0, tiltX: 0.44 };
+    function project(n, o) {
+      var ry = PROJ.rotY;
+      var cyR = Math.cos(ry), syR = Math.sin(ry);
+      var x1 = n.x * cyR + n.z * syR;
+      var z1 = -n.x * syR + n.z * cyR;
+      var tx = PROJ.tiltX;
+      var cx = Math.cos(tx), sx = Math.sin(tx);
+      var y2 = n.y * cx - z1 * sx;
+      var z2 = n.y * sx + z1 * cx;
+      var d = 2.6;
+      var sc = d / (d - z2) * LAT_R * R;
       return {
-        px: CX + x3 * scale * fov,
-        py: CY - y3 * scale * fov,
-        z: z2,
-        fov: fov
+        sx: CX + x1 * sc,
+        sy: CY - y2 * sc,
+        z: z2
       };
     }
 
-    /* ============ 4. DRAWING MODULES ============ */
-
-    // Module A: High-Precision Futuristic HUD & Corner Reticles
-    function drawHudReticle() {
-      ctx.save();
-      ctx.strokeStyle = 'rgba(6, 182, 212, 0.22)';
-      ctx.lineWidth = 1;
-
-      var pad = 16;
-      var bLen = 12;
-
-      // Corner Precision Brackets
-      ctx.beginPath();
-      // TL
-      ctx.moveTo(pad, pad + bLen); ctx.lineTo(pad, pad); ctx.lineTo(pad + bLen, pad);
-      // TR
-      ctx.moveTo(W - pad - bLen, pad); ctx.lineTo(W - pad, pad); ctx.lineTo(W - pad, pad + bLen);
-      // BL
-      ctx.moveTo(pad, H - pad - bLen); ctx.lineTo(pad, H - pad); ctx.lineTo(pad + bLen, H - pad);
-      // BR
-      ctx.moveTo(W - pad - bLen, H - pad); ctx.lineTo(W - pad, H - pad); ctx.lineTo(W - pad, H - pad - bLen);
-      ctx.stroke();
-
-      // Outer Fine Circular Grid Markings
-      ctx.strokeStyle = 'rgba(37, 99, 235, 0.08)';
-      ctx.beginPath();
-      ctx.arc(CX, CY, 195, 0, Math.PI * 2);
-      ctx.stroke();
-
-      ctx.restore();
+    /* ============ matrix rain backdrop ============ */
+    var RAIN = [];
+    function buildRain() {
+      RAIN = [];
+      var cols = Math.floor(W / 18);
+      for (var i = 0; i < cols; i++) {
+        RAIN.push({ x: i * 18 + 5, head: Math.random() * H, len: 8 + (Math.random() * 14 | 0), v: 0.5 + Math.random() * 1.2 });
+      }
     }
 
-    // Module B: 3D Outer Gyroscopic Gimbal Rings with Degree Marks
-    function drawGimbalRings(t) {
-      ctx.save();
-
-      // Ring 1: Calibrated Major Orbit
-      var r1 = 168;
-      var tilt1 = 0.45 + MOUSE.y * 0.15;
-      var spin1 = t * 0.25;
-
-      ctx.beginPath();
-      var pts = 64;
-      for (var k = 0; k <= pts; k++) {
-        var phi = (k / pts) * Math.PI * 2;
-        var rx = Math.cos(phi) * r1;
-        var rz = Math.sin(phi) * r1;
-        var ry = rz * Math.sin(tilt1);
-        rz = rz * Math.cos(tilt1);
-
-        var p = project3D(rx / r1, ry / r1, rz / r1, 0, spin1, 0, r1);
-        if (k === 0) ctx.moveTo(p.px, p.py);
-        else ctx.lineTo(p.px, p.py);
+    function drawRain(t) {
+      ctx.font = '8px monospace';
+      ctx.textAlign = 'center';
+      for (var i = 0; i < RAIN.length; i++) {
+        var c = RAIN[i];
+        c.head += c.v;
+        if (c.head > H + c.len * 10) c.head = -c.len * 6;
+        for (var k = 0; k < c.len; k++) {
+          var yy = c.head - k * 10;
+          if (yy < 0 || yy > H) continue;
+          var a = Math.max(0, 1 - k / c.len);
+          var lead = k === 0;
+          ctx.globalAlpha = lead ? 0.75 * a : 0.30 * a * (0.5 + 0.5 * Math.sin(i * 7.3 + tick / 4));
+          ctx.fillStyle = lead ? 'rgba(2,132,199,1)' : 'rgba(6,182,212,1)';
+          ctx.fillText((hash(i + k * 3, k) & 1) ? '1' : '0', c.x, yy);
+        }
       }
-      ctx.strokeStyle = 'rgba(6, 182, 212, 0.35)';
-      ctx.lineWidth = 1.2;
+      ctx.globalAlpha = 1;
+    }
+
+    function hash(a, b) {
+      a = (a + b * 7919) | 0;
+      a = ((a ^ 61) ^ (a >> 16)) | 0;
+      a = ((a + (a << 3)) ^ (a >> 4)) | 0;
+      a = (a + (a << 5)) | 0;
+      return a < 0 ? -a : a;
+    }
+
+    /* ============ floor grid ============ */
+    function drawFloor() {
+      ctx.strokeStyle = 'rgba(2,132,199,0.10)';
+      ctx.lineWidth = 1;
+      var vy = CY + R * 0.55;
+      ctx.beginPath();
+      for (var x = -1.2; x <= 1.2; x += 0.3) {
+        ctx.moveTo(CX + x * R * 0.4, vy - R * 0.05);
+        ctx.lineTo(CX + x * R * 1.7, H + 4);
+      }
       ctx.stroke();
+      ctx.beginPath();
+      for (var yy = 0; yy <= 4; yy++) {
+        var k = yy / 4;
+        var yk = vy + (H - vy) * Math.pow(k, 1.6);
+        ctx.moveTo(CX - R * (0.35 + 1.2 * k), yk);
+        ctx.lineTo(CX + R * (0.35 + 1.2 * k), yk);
+      }
+      ctx.stroke();
+    }
 
-      // Calibrated Angle Ticks on Ring 1
-      for (var deg = 0; deg < 12; deg++) {
-        var theta = (deg / 12) * Math.PI * 2;
-        var rx1 = Math.cos(theta) * (r1 - 4);
-        var rz1 = Math.sin(theta) * (r1 - 4);
-        var ry1 = rz1 * Math.sin(tilt1);
-        rz1 = rz1 * Math.cos(tilt1);
-        var p1 = project3D(rx1 / r1, ry1 / r1, rz1 / r1, 0, spin1, 0, r1);
+    /* ============ lattice ============ */
+    var CYBER_LABELS = [
+      { idx: 15, text: '[QKV] TENSOR' },
+      { idx: 34, text: 'AUTONOMOUS' },
+      { idx: 52, text: 'SOVEREIGN' },
+      { idx: 76, text: 'CODE' },
+      { idx: 98, text: 'EMBED' },
+      { idx: 118, text: 'DETERMINISTIC' },
+      { idx: 142, text: '0x8F' }
+    ];
 
-        var rx2 = Math.cos(theta) * (r1 + 4);
-        var rz2 = Math.sin(theta) * (r1 + 4);
-        var ry2 = rz2 * Math.sin(tilt1);
-        rz2 = rz2 * Math.cos(tilt1);
-        var p2 = project3D(rx2 / r1, ry2 / r1, rz2 / r1, 0, spin1, 0, r1);
+    function drawLattice(t) {
+      var n = NODES.length;
+      var P = new Array(n);
+      for (var i = 0; i < n; i++) P[i] = project(NODES[i], i);
 
-        ctx.strokeStyle = 'rgba(6, 182, 212, 0.45)';
-        ctx.lineWidth = 1;
+      /* edges */
+      ctx.lineWidth = 0.8;
+      for (i = 0; i < LINKS.length; i++) {
+        var a = LINKS[i][0], b = LINKS[i][1];
+        var depth = clamp((P[a].z + P[b].z) / 2 * 0.62 + 0.5, 0, 1);
+        ctx.strokeStyle = 'rgba(37,99,235,' + (0.08 + depth * 0.35).toFixed(3) + ')';
         ctx.beginPath();
-        ctx.moveTo(p1.px, p1.py);
-        ctx.lineTo(p2.px, p2.py);
+        ctx.moveTo(P[a].sx, P[a].sy);
+        ctx.lineTo(P[b].sx, P[b].sy);
         ctx.stroke();
       }
 
-      // Orbiting Satellite Beacon on Ring 1
-      var satPhi = spin1 * 2.2;
-      var sx = Math.cos(satPhi) * r1;
-      var sz = Math.sin(satPhi) * r1;
-      var sy = sz * Math.sin(tilt1);
-      sz = sz * Math.cos(tilt1);
-      var sp = project3D(sx / r1, sy / r1, sz / r1, 0, spin1, 0, r1);
+      /* nodes (depth sorted far→near) */
+      var order = new Array(n);
+      for (i = 0; i < n; i++) order[i] = i;
+      order.sort(function (x, y) { return P[x].z - P[y].z; });
 
-      // Satellite Glow
-      var satGlow = ctx.createRadialGradient(sp.px, sp.py, 0, sp.px, sp.py, 10);
-      satGlow.addColorStop(0, 'rgba(6, 182, 212, 0.95)');
-      satGlow.addColorStop(0.4, 'rgba(37, 99, 235, 0.4)');
-      satGlow.addColorStop(1, 'rgba(6, 182, 212, 0)');
-      ctx.fillStyle = satGlow;
-      ctx.beginPath();
-      ctx.arc(sp.px, sp.py, 10, 0, Math.PI * 2);
-      ctx.fill();
+      ctx.globalCompositeOperation = 'source-over';
+      for (i = 0; i < n; i++) {
+        var idx = order[i];
+        var d = clamp(P[idx].z * 0.62 + 0.5, 0, 1);
+        var c = NODES[idx].col;
+        var pr = (1.2 + d * 2.2) * (0.4 + Math.min(W, H) / 1100);
+        ctx.globalAlpha = 0.35 + d * 0.65;
 
-      // Satellite Core
-      ctx.fillStyle = '#ffffff';
-      ctx.beginPath();
-      ctx.arc(sp.px, sp.py, 2.2, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Ring 2: Counter-Rotating Secondary Dashed Ring
-      var r2 = 142;
-      var tilt2 = -0.38 + MOUSE.y * 0.12;
-      var spin2 = -t * 0.18;
-
-      ctx.beginPath();
-      for (k = 0; k <= pts; k++) {
-        phi = (k / pts) * Math.PI * 2;
-        rx = Math.cos(phi) * r2;
-        rz = Math.sin(phi) * r2;
-        ry = rz * Math.sin(tilt2);
-        rz = rz * Math.cos(tilt2);
-
-        p = project3D(rx / r2, ry / r2, rz / r2, 0, spin2, 0, r2);
-        if (k === 0) ctx.moveTo(p.px, p.py);
-        else ctx.lineTo(p.px, p.py);
-      }
-      ctx.strokeStyle = 'rgba(139, 92, 246, 0.28)';
-      ctx.lineWidth = 1;
-      ctx.setLineDash([4, 8]);
-      ctx.stroke();
-      ctx.setLineDash([]);
-
-      ctx.restore();
-    }
-
-    // Module C: Harmonic Sinusoidal Neural Reasoning Waveform Ring
-    function drawHarmonicWaveRing(t) {
-      ctx.save();
-      var baseR = 118;
-      var segments = 72;
-      ctx.beginPath();
-
-      for (var s = 0; s <= segments; s++) {
-        var theta = (s / segments) * Math.PI * 2;
-        var wave = Math.sin(theta * 6 + t * 2.8) * 4.5 + Math.cos(theta * 3 - t * 1.6) * 3;
-        var curR = baseR + wave;
-        var wx = Math.cos(theta) * curR;
-        var wy = Math.sin(theta) * curR * 0.42; // Tilted perspective
-        var px = CX + wx;
-        var py = CY + wy;
-
-        if (s === 0) ctx.moveTo(px, py);
-        else ctx.lineTo(px, py);
-      }
-      ctx.closePath();
-
-      var waveGrad = ctx.createLinearGradient(CX - baseR, CY, CX + baseR, CY);
-      waveGrad.addColorStop(0, 'rgba(6, 182, 212, 0.4)');
-      waveGrad.addColorStop(0.5, 'rgba(139, 92, 246, 0.55)');
-      waveGrad.addColorStop(1, 'rgba(6, 182, 212, 0.4)');
-
-      ctx.strokeStyle = waveGrad;
-      ctx.lineWidth = 1.2;
-      ctx.stroke();
-
-      ctx.restore();
-    }
-
-    // Module D: Soft Robotic 360° LiDAR Spatial Sweep
-    function drawLidarSweep(t) {
-      ctx.save();
-      var sweepAng = t * 1.8;
-      var sweepR = 155;
-
-      // Soft Semi-Transparent Cone
-      ctx.beginPath();
-      ctx.moveTo(CX, CY);
-      ctx.arc(CX, CY, sweepR, sweepAng - 0.42, sweepAng, false);
-      ctx.closePath();
-
-      var coneGrad = ctx.createRadialGradient(CX, CY, 0, CX, CY, sweepR);
-      coneGrad.addColorStop(0, 'rgba(6, 182, 212, 0.16)');
-      coneGrad.addColorStop(0.7, 'rgba(16, 185, 129, 0.06)');
-      coneGrad.addColorStop(1, 'rgba(6, 182, 212, 0)');
-      ctx.fillStyle = coneGrad;
-      ctx.fill();
-
-      // Crisp Leading Edge
-      var lx = CX + Math.cos(sweepAng) * sweepR;
-      var ly = CY + Math.sin(sweepAng) * sweepR;
-      var lineGrad = ctx.createLinearGradient(CX, CY, lx, ly);
-      lineGrad.addColorStop(0, 'rgba(16, 185, 129, 0.85)');
-      lineGrad.addColorStop(1, 'rgba(6, 182, 212, 0)');
-      ctx.strokeStyle = lineGrad;
-      ctx.lineWidth = 1.4;
-      ctx.beginPath();
-      ctx.moveTo(CX, CY);
-      ctx.lineTo(lx, ly);
-      ctx.stroke();
-
-      ctx.restore();
-    }
-
-    // Module E: 3D Crystalline Geodesic Core (Icosahedron & Octahedron)
-    function drawCyberCrystal(t) {
-      var rotX = 0.35 + MOUSE.y * 0.45;
-      var rotY = t * 0.45 + MOUSE.x * 0.55;
-      var rotZ = t * 0.12;
-      var crystalR = 86;
-
-      // Project Outer Vertices
-      var projVerts = [];
-      for (var i = 0; i < VERTS.length; i++) {
-        var v = VERTS[i];
-        projVerts.push(project3D(v[0], v[1], v[2], rotX, rotY, rotZ, crystalR));
-      }
-
-      // Draw Outer Edges (Struts)
-      ctx.save();
-      for (var e = 0; e < EDGES.length; e++) {
-        var edge = EDGES[e];
-        var p1 = projVerts[edge[0]];
-        var p2 = projVerts[edge[1]];
-        var midZ = (p1.z + p2.z) * 0.5;
-        var depthAlpha = Math.max(0.12, (midZ + 1.2) / 2.4);
-
-        var edgeGrad = ctx.createLinearGradient(p1.px, p1.py, p2.px, p2.py);
-        edgeGrad.addColorStop(0, 'rgba(6, 182, 212, ' + (depthAlpha * 0.75) + ')');
-        edgeGrad.addColorStop(0.5, 'rgba(147, 197, 253, ' + (depthAlpha * 0.95) + ')');
-        edgeGrad.addColorStop(1, 'rgba(37, 99, 235, ' + (depthAlpha * 0.75) + ')');
-
-        ctx.strokeStyle = edgeGrad;
-        ctx.lineWidth = 1.0 + depthAlpha * 0.6;
-        ctx.beginPath();
-        ctx.moveTo(p1.px, p1.py);
-        ctx.lineTo(p2.px, p2.py);
-        ctx.stroke();
-      }
-
-      // Draw Data Packet Photons gliding along edges
-      for (var pk = 0; pk < PACKETS.length; pk++) {
-        var pkt = PACKETS[pk];
-        pkt.prog += pkt.spd;
-        if (pkt.prog >= 1.0) {
-          pkt.prog = 0.0;
-          pkt.edge = Math.floor(Math.random() * EDGES.length);
+        // Soft halo for select focal clusters
+        if (idx % 14 === 0 && d > 0.4) {
+          var auraR = pr * 3.6;
+          var gAura = ctx.createRadialGradient(P[idx].sx, P[idx].sy, 0, P[idx].sx, P[idx].sy, auraR);
+          gAura.addColorStop(0, 'rgba(' + c[0] + ',' + c[1] + ',' + c[2] + ',' + (0.45 * d) + ')');
+          gAura.addColorStop(1, 'rgba(' + c[0] + ',' + c[1] + ',' + c[2] + ',0)');
+          ctx.fillStyle = gAura;
+          ctx.beginPath();
+          ctx.arc(P[idx].sx, P[idx].sy, auraR, 0, 6.2832);
+          ctx.fill();
         }
 
-        var curEdge = EDGES[pkt.edge];
-        var nA = projVerts[pkt.forward ? curEdge[0] : curEdge[1]];
-        var nB = projVerts[pkt.forward ? curEdge[1] : curEdge[0]];
-
-        var curX = nA.px + (nB.px - nA.px) * pkt.prog;
-        var curY = nA.py + (nB.py - nA.py) * pkt.prog;
-        var curZ = nA.z + (nB.z - nA.z) * pkt.prog;
-        var pAlpha = Math.max(0.2, (curZ + 1.2) / 2.4);
-
-        ctx.fillStyle = 'rgba(' + pkt.col.join(',') + ', ' + pAlpha + ')';
+        ctx.fillStyle = 'rgb(' + c[0] + ',' + c[1] + ',' + c[2] + ')';
         ctx.beginPath();
-        ctx.arc(curX, curY, 2.5, 0, Math.PI * 2);
+        ctx.arc(P[idx].sx, P[idx].sy, pr, 0, 6.2832);
         ctx.fill();
 
-        // White core spark
-        ctx.fillStyle = '#ffffff';
-        ctx.beginPath();
-        ctx.arc(curX, curY, 1.2, 0, Math.PI * 2);
-        ctx.fill();
-      }
-
-      // Draw Outer Vertices (Nodes)
-      for (var vIdx = 0; vIdx < projVerts.length; vIdx++) {
-        var pv = projVerts[vIdx];
-        var vDepth = Math.max(0.35, (pv.z + 1.2) / 2.4);
-        var nodeR = 2.8 * vDepth;
-
-        // Subtle soft halo
-        ctx.fillStyle = 'rgba(6, 182, 212, ' + (vDepth * 0.45) + ')';
-        ctx.beginPath();
-        ctx.arc(pv.px, pv.py, nodeR * 2.2, 0, Math.PI * 2);
-        ctx.fill();
-
-        // Luminous Node Core
-        ctx.fillStyle = '#e0f2fe';
-        ctx.beginPath();
-        ctx.arc(pv.px, pv.py, nodeR, 0, Math.PI * 2);
-        ctx.fill();
-
-        // High photon center
-        if (pv.z > 0) {
-          ctx.fillStyle = '#ffffff';
+        if (d > 0.68) {
+          ctx.globalAlpha = (d - 0.68) * 0.85;
+          ctx.fillStyle = 'rgba(240,253,250,1)';
           ctx.beginPath();
-          ctx.arc(pv.px, pv.py, nodeR * 0.5, 0, Math.PI * 2);
+          ctx.arc(P[idx].sx, P[idx].sy, pr * 0.55, 0, 6.2832);
           ctx.fill();
         }
       }
 
-      // Inner Core Octahedron (Dual nested transformer crystal)
-      var innerR = 44;
-      var innerProj = [];
-      for (var inIdx = 0; inIdx < INNER_RAW.length; inIdx++) {
-        var iv = INNER_RAW[inIdx];
-        innerProj.push(project3D(iv[0], iv[1], iv[2], -rotX * 0.8, -rotY * 0.8, -rotZ, innerR));
+      /* 3D Floating cyber tags */
+      ctx.font = '7.5px "JetBrains Mono", Consolas, monospace';
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'middle';
+      for (var k = 0; k < CYBER_LABELS.length; k++) {
+        var item = CYBER_LABELS[k];
+        var pNode = P[item.idx];
+        if (pNode && pNode.z > -0.15) {
+          var tagAlpha = clamp((pNode.z + 0.15) * 1.5, 0, 0.85);
+          ctx.globalAlpha = tagAlpha;
+          ctx.fillStyle = 'rgba(14, 165, 233, 0.85)';
+          ctx.fillText(item.text, pNode.sx + 6, pNode.sy - 2);
+        }
       }
 
-      for (var ie = 0; ie < INNER_EDGES.length; ie++) {
-        var iEdge = INNER_EDGES[ie];
-        var ip1 = innerProj[iEdge[0]];
-        var ip2 = innerProj[iEdge[1]];
-        ctx.strokeStyle = 'rgba(139, 92, 246, 0.4)';
+      /* Rotating/pulsing emerald laser scanning beam */
+      var beamAng = (t * 0.5) % 6.2832;
+      var beamLen = R * 1.08;
+      var bx = CX + Math.cos(beamAng) * beamLen;
+      var by = CY + Math.sin(beamAng) * beamLen;
+      var gBeam = ctx.createLinearGradient(CX, CY, bx, by);
+      gBeam.addColorStop(0, 'rgba(16, 185, 129, 0.7)');
+      gBeam.addColorStop(0.7, 'rgba(16, 185, 129, 0.45)');
+      gBeam.addColorStop(1, 'rgba(16, 185, 129, 0)');
+      ctx.strokeStyle = gBeam;
+      ctx.lineWidth = 1.4;
+      ctx.beginPath();
+      ctx.moveTo(CX, CY);
+      ctx.lineTo(bx, by);
+      ctx.stroke();
+
+      ctx.globalAlpha = 1;
+    }
+
+    /* ============ signals ============ */
+    function spawnSignal() {
+      if (!LINKS.length || SIGS.length > 7) return;
+      var l = LINKS[(Math.random() * LINKS.length) | 0];
+      SIGS.push({
+        a: l[0], b: l[1],
+        t: Math.random() * 0.5,
+        v: 0.006 + Math.random() * 0.011,
+        col: PAL[(Math.random() * PAL.length) | 0]
+      });
+    }
+
+    function drawSignals(t) {
+      for (var i = SIGS.length - 1; i >= 0; i--) {
+        var s = SIGS[i];
+        s.t += s.v;
+        if (s.t >= 1) { SIGS.splice(i, 1); continue; }
+        var Pa = project(NODES[s.a], 0);
+        var Pb = project(NODES[s.b], 0);
+        var e = clamp(s.t, 0, 1);
+        var x = Pa.sx + (Pb.sx - Pa.sx) * e;
+        var y = Pa.sy + (Pb.sy - Pa.sy) * e;
+        var g = ctx.createRadialGradient(x, y, 0, x, y, 9);
+        g.addColorStop(0, 'rgba(' + s.col[0] + ',' + s.col[1] + ',' + s.col[2] + ',0.85)');
+        g.addColorStop(1, 'rgba(' + s.col[0] + ',' + s.col[1] + ',' + s.col[2] + ',0)');
+        ctx.fillStyle = g;
+        ctx.beginPath();
+        ctx.arc(x, y, 9, 0, 6.2832);
+        ctx.fill();
+        /* deep head for contrast on light bg */
+        ctx.fillStyle = 'rgba(255,255,255,0.95)';
+        ctx.beginPath();
+        ctx.arc(x, y, 1.6, 0, 6.2832);
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(' + s.col[0] + ',' + s.col[1] + ',' + s.col[2] + ',0.9)';
         ctx.lineWidth = 1;
         ctx.beginPath();
-        ctx.moveTo(ip1.px, ip1.py);
-        ctx.lineTo(ip2.px, ip2.py);
+        ctx.arc(x, y, 2.4, 0, 6.2832);
         ctx.stroke();
       }
-
-      ctx.restore();
     }
 
-    // Module F: Robotic Sensor Iris & Interactive Tracking Pupil
-    function drawRoboticPupilCore(t) {
-      ctx.save();
+    /* ============ 3D orbit rings with comets ============ */
+    function ringPoint(D, u) {
+      var ax = D.axis[0], ay = D.axis[1], az = D.axis[2];
+      var al = Math.sqrt(ax * ax + ay * ay + az * az);
+      ax /= al; ay /= al; az /= al;
+      var ox = 1, oy = 0, oz = 0;
+      var dot = ax * ox + ay * oy + az * oz;
+      var rx = ox - ax * dot, ry = oy - ay * dot, rz = oz - az * dot;
+      var rl = Math.sqrt(rx * rx + ry * ry + rz * rz);
+      if (rl < 1e-4) { rx = 0; ry = 1; rz = 0; rl = 1; }
+      rx /= rl; ry /= rl; rz /= rl;
+      var cx2 = ay * rz - az * ry, cy2 = az * rx - ax * rz, cz2 = ax * ry - ay * rx;
+      var cu = Math.cos(u), su = Math.sin(u);
+      return {
+        x: (rx * cu + cx2 * su) * D.r,
+        y: (ry * cu + cy2 * su) * D.r,
+        z: (rz * cu + cz2 * su) * D.r
+      };
+    }
 
-      // Smooth spring pupil tracking
-      MOUSE.pupilX += (MOUSE.tx * 14 - MOUSE.pupilX) * 0.08;
-      MOUSE.pupilY += (MOUSE.ty * 14 - MOUSE.pupilY) * 0.08;
+    function drawRings(t) {
+      for (var k = 0; k < RINGDEF.length; k++) {
+        var D = RINGDEF[k];
+        var base = 'rgba(' + D.col[0] + ',' + D.col[1] + ',' + D.col[2] + ',';
+        var SEGS = 72;
+        var pts = new Array(SEGS);
+        for (var i = 0; i < SEGS; i++) {
+          pts[i] = project(ringPoint(D, i / SEGS * Math.PI * 2), 0);
+        }
+        /* dashed segments, brightness by front/back */
+        ctx.lineWidth = 1;
+        for (i = 0; i < SEGS; i += 2) {
+          var p1 = pts[i], p2 = pts[(i + 1) % SEGS];
+          var dIt = clamp((p1.z + p2.z) * 0.5 * 0.62 + 0.5, 0, 1);
+          ctx.strokeStyle = base + (0.16 + dIt * 0.7).toFixed(3) + ')';
+          ctx.beginPath();
+          ctx.moveTo(p1.sx, p1.sy);
+          ctx.lineTo(p2.sx, p2.sy);
+          ctx.stroke();
+        }
+        /* comet: satellite + trail */
+        var ph = t * D.spin * 1.2 + k * 2.4;
+        for (var tr = 6; tr >= 0; tr--) {
+          var tp = project(ringPoint(D, ph - tr * 0.055), 0);
+          var ta = Math.pow(0.68, tr);
+          ctx.globalAlpha = tr === 0 ? 1 : ta * 0.55;
+          ctx.fillStyle = tr === 0 ? base + '1)' : base + '0.7)';
+          ctx.beginPath();
+          ctx.arc(tp.sx, tp.sy, tr === 0 ? 2.6 : 0.5 + ta * 1.5, 0, 6.2832);
+          ctx.fill();
+        }
+        ctx.globalAlpha = 1;
+      }
+    }
 
-      var eyeCX = CX + MOUSE.pupilX;
-      var eyeCY = CY + MOUSE.pupilY;
-
-      // 1. Quantum Singularity Corona
-      var coronaR = 26 + Math.sin(t * 3.5) * 2;
-      var corona = ctx.createRadialGradient(eyeCX, eyeCY, 0, eyeCX, eyeCY, coronaR * 2.2);
-      corona.addColorStop(0, 'rgba(6, 182, 212, 0.95)');
-      corona.addColorStop(0.35, 'rgba(37, 99, 235, 0.55)');
-      corona.addColorStop(0.7, 'rgba(139, 92, 246, 0.2)');
-      corona.addColorStop(1, 'rgba(6, 182, 212, 0)');
-
-      ctx.fillStyle = corona;
+    /* ============ central star core ============ */
+    function drawStar(t) {
+      var cr = R * 0.17;
+      var pulse = 1 + 0.09 * Math.sin(t * 2.1);
+      var g = ctx.createRadialGradient(CX, CY, 0, CX, CY, cr * pulse * 2.4);
+      g.addColorStop(0, 'rgba(255,255,255,0.95)');
+      g.addColorStop(0.2, 'rgba(14,165,233,0.75)');
+      g.addColorStop(0.5, 'rgba(37,99,235,0.30)');
+      g.addColorStop(1, 'rgba(37,99,235,0)');
+      ctx.fillStyle = g;
       ctx.beginPath();
-      ctx.arc(eyeCX, eyeCY, coronaR * 2.2, 0, Math.PI * 2);
+      ctx.arc(CX, CY, cr * pulse * 2.4, 0, 6.2832);
       ctx.fill();
-
-      // 2. Mechanical Aperture Blade Ring (Breathes gently)
-      var bladeR = 18 + Math.sin(t * 2.0) * 1.5;
-      var blades = 8;
-      var bSpin = t * 0.6;
-
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.75)';
-      ctx.lineWidth = 1.2;
-      for (var b = 0; b < blades; b++) {
-        var ang = bSpin + (b / blades) * Math.PI * 2;
-        var bx1 = eyeCX + Math.cos(ang) * (bladeR * 0.45);
-        var by1 = eyeCY + Math.sin(ang) * (bladeR * 0.45);
-        var bx2 = eyeCX + Math.cos(ang + 0.55) * (bladeR * 1.15);
-        var by2 = eyeCY + Math.sin(ang + 0.55) * (bladeR * 1.15);
+      /* sparkle cross */
+      var sA = t * 0.4;
+      for (var a = 0; a < 2; a++) {
+        var ang = sA + a * Math.PI / 2;
+        ctx.strokeStyle = 'rgba(14,116,144,0.7)';
+        ctx.lineWidth = 1;
         ctx.beginPath();
-        ctx.moveTo(bx1, by1);
-        ctx.lineTo(bx2, by2);
+        ctx.moveTo(CX + Math.cos(ang) * cr * 0.4, CY + Math.sin(ang) * cr * 0.4);
+        ctx.lineTo(CX + Math.cos(ang) * cr * pulse * 1.8, CY + Math.sin(ang) * cr * pulse * 1.8);
         ctx.stroke();
       }
-
-      // 3. Ultra-Bright Focal Pupil
-      var pupilGlow = ctx.createRadialGradient(eyeCX, eyeCY, 0, eyeCX, eyeCY, 8);
-      pupilGlow.addColorStop(0, '#ffffff');
-      pupilGlow.addColorStop(0.5, 'rgba(6, 182, 212, 0.9)');
-      pupilGlow.addColorStop(1, 'rgba(6, 182, 212, 0)');
-      ctx.fillStyle = pupilGlow;
-      ctx.beginPath();
-      ctx.arc(eyeCX, eyeCY, 8, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Sharp white photon center
-      ctx.fillStyle = '#ffffff';
-      ctx.beginPath();
-      ctx.arc(eyeCX, eyeCY, 3, 0, Math.PI * 2);
-      ctx.fill();
-
-      ctx.restore();
     }
 
-    // Module G: Minimalist Clean Telemetry Footer HUD
-    function drawTelemetryFooter(t) {
-      ctx.save();
-      var textY = H - 22;
-
-      ctx.fillStyle = 'rgba(3, 105, 161, 0.7)';
-      ctx.font = '700 8.5px "Plus Jakarta Sans", monospace';
-      ctx.textAlign = 'center';
-
-      var ms = (11 + Math.sin(t * 2) * 1.2).toFixed(0);
-      var text = '● CYBER·ROBOTIC CORE // DETERMINISTIC // ' + ms + 'ms INFERENCE // ON-PREMISE AIRGAPPED';
-      ctx.fillText(text, CX, textY);
-
-      ctx.restore();
+    /* ============ shockwaves ============ */
+    var WAVES = [];
+    function spawnWave() {
+      if (WAVES.length > 2) return;
+      WAVES.push({ r: R * 0.28, v: R * 2.2, a: 0.5, col: PAL[(Math.random() * PAL.length) | 0] });
+    }
+    function drawWaves(ts) {
+      ts = ts || 1;
+      for (var i = WAVES.length - 1; i >= 0; i--) {
+        var w = WAVES[i];
+        w.r += w.v * 0.016;
+        w.a *= 0.965;
+        if (w.a < 0.02 || w.r > R * 1.55) { WAVES.splice(i, 1); continue; }
+        ctx.globalAlpha = w.a;
+        ctx.strokeStyle = 'rgba(' + w.col[0] + ',' + w.col[1] + ',' + w.col[2] + ',0.9)';
+        ctx.lineWidth = 2.2 * w.a + 0.3;
+        ctx.beginPath();
+        ctx.arc(CX, CY, w.r, 0, 6.2832);
+        ctx.stroke();
+      }
+      ctx.globalAlpha = 1;
     }
 
-    /* ============ 5. MAIN ANIMATION LOOP ============ */
+    /* ============ scan sweep ============ */
+    function drawScan(t) {
+      var y = ((t * 0.22) % 1) * (H * 1.1) - H * 0.05;
+      var g = ctx.createLinearGradient(0, y - 26, 0, y);
+      g.addColorStop(0, 'rgba(14,165,233,0)');
+      g.addColorStop(1, 'rgba(14,165,233,0.22)');
+      ctx.fillStyle = g;
+      ctx.fillRect(0, y - 26, W, 26);
+    }
+
+    /* ============ telemetry ticker ============ */
+    var TICK_STR = null, TICK_AT = 0;
+    function telemetry(ts) {
+      if (!TICK_STR || ts - TICK_AT > 1500) {
+        TICK_AT = ts;
+        var part = 'SOVEREIGN · DETERMINISTIC · ROBOTICS · BUS: ARMED · AIR-GAPPED · TOKENS/S: ' +
+          (4.2 + Math.random() * 0.9).toFixed(1) + 'K · LAT: ' + (9 + Math.random() * 6 | 0) +
+          'ms · ACC: 99.8% · REALTIME · RX ' + (12 + Math.random() * 4).toFixed(1) +
+          ' Gb/s · TX ' + (7 + Math.random() * 3).toFixed(1) + ' Gb/s · MEM ' + (35 + Math.random() * 12 | 0) +
+          '% · HIT 98.9% · NODES ' + (8800 + Math.random() * 950 | 0) + ' · ';
+        TICK_STR = part + part;
+      }
+      return TICK_STR;
+    }
+
+    function drawTicker(t) {
+      var txt = telemetry(t * 1000);
+      ctx.font = '8px monospace';
+      ctx.textAlign = 'left';
+      var w = ctx.measureText(txt).width;
+      var off = (t * 30) % (w / 2);
+      ctx.fillStyle = 'rgba(2,132,199,0.7)';
+      ctx.fillText(txt, -off, H - 8);
+      ctx.fillText(txt, w / 2 - off, H - 8);
+    }
+
+    /* ============ HUD brackets ============ */
+    function drawHud() {
+      var off = 14, m = 8;
+      var corners = [[off, off], [W - off, off], [off, H - off], [W - off, H - off]];
+      ctx.strokeStyle = 'rgba(30,64,175,0.55)';
+      ctx.lineWidth = 1.2;
+      for (var i = 0; i < 4; i++) {
+        var x = corners[i][0], y = corners[i][1];
+        ctx.beginPath();
+        ctx.moveTo(x - m, y); ctx.lineTo(x + m, y);
+        ctx.moveTo(x, y - m); ctx.lineTo(x, y + m);
+        ctx.stroke();
+      }
+    }
+
+    /* ============ metrics ============ */
+    function $m(sel) { return document.querySelector(sel); }
+    var elNodes = $m('[data-nodes]');
+    var elLoad = $m('[data-load]');
+    var elSync = $m('[data-sync]');
+    var baseNodes = 8900, nodes = 9758;
+    var loadVal = 95, loadTarget = 95, syncVal = 15;
+
+    function updateMetrics(t) {
+      if (!elNodes) elNodes = $m('[data-nodes]');
+      if (!elLoad) elLoad = $m('[data-load]');
+      if (!elSync) elSync = $m('[data-sync]');
+
+      if (elNodes) {
+        nodes += (Math.random() - 0.48) * 32;
+        nodes = Math.max(baseNodes, Math.min(9980, nodes));
+        elNodes.textContent = Math.round(nodes).toLocaleString('en-US');
+      }
+      if (Math.random() < 0.04) loadTarget = 92 + Math.random() * 7;
+      loadVal += (loadTarget - loadVal) * 0.04;
+      if (elLoad) elLoad.textContent = Math.round(loadVal) + '%';
+      syncVal = Math.max(12, Math.min(32, syncVal + (Math.random() - 0.5) * 3));
+      if (elSync) elSync.innerHTML = Math.round(syncVal) + '<span>ms</span>';
+    }
+
+    function clamp(v, a, b) { return v < a ? a : v > b ? b : v; }
+
+    /* ============ frame ============ */
     function render(t) {
+      ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
       ctx.clearRect(0, 0, W, H);
+      ctx.save();
+      ctx.translate(PAR.x * R * 0.035, PAR.y * R * 0.035);
 
-      drawHudReticle();
-      drawGimbalRings(t);
-      drawHarmonicWaveRing(t);
-      drawLidarSweep(t);
-      drawCyberCrystal(t);
-      drawRoboticPupilCore(t);
-      drawTelemetryFooter(t);
+      PROJ.rotY = t * 0.3;
+      PROJ.tiltX = 0.44 + 0.08 * Math.sin(t * 0.21) + PAR.y * 0.4;
+
+      drawRain(t);
+      drawFloor();
+      drawScan(t);
+      drawRings(t);
+      drawLattice(t);
+      drawSignals(t);
+      drawStar(t);
+      drawWaves(t);
+      drawTicker(t);
+      drawHud();
+
+      tick++;
+      if (tick % 6 === 0) spawnSignal();
+      if (tick % 90 === 0) spawnWave();
+      if (tick % 3 === 0) updateMetrics(t);
+      ctx.restore();
     }
 
+    /* ============ lifecycle ============ */
     function loop(ts) {
       if (!running) return;
       if (!startT) startT = ts;
       if (!document.hidden) {
-        MOUSE.x += (MOUSE.tx - MOUSE.x) * 0.05;
-        MOUSE.y += (MOUSE.ty - MOUSE.y) * 0.05;
+        PAR.x += (PAR.tx - PAR.x) * 0.05;
+        PAR.y += (PAR.ty - PAR.y) * 0.05;
         render((ts - startT) / 1000);
       }
       raf = window.requestAnimationFrame(loop);
     }
 
-    function startNow() {
-      if (!running) {
-        running = true;
-        if (!raf) raf = window.requestAnimationFrame(loop);
-      }
-    }
-
-    function stopNow() {
-      running = false;
-      if (raf) cancelAnimationFrame(raf);
-      raf = 0;
-    }
+    function startNow() { if (!running) { running = true; if (!raf) raf = window.requestAnimationFrame(loop); } }
+    function stopNow() { running = false; cancelAnimationFrame(raf); raf = 0; }
 
     function resize() {
-      W = canvas.clientWidth || 470;
-      H = canvas.clientHeight || 470;
+      W = canvas.clientWidth || 468;
+      H = canvas.clientHeight || 468;
       canvas.width = Math.round(W * DPR);
       canvas.height = Math.round(H * DPR);
       CX = W / 2;
-      CY = H / 2;
-      ctx.scale(DPR, DPR);
+      CY = H / 2 + H * 0.015;
+      R = Math.min(W, H) * 0.33;
       if (reduced) render(0);
     }
 
+    buildLattice();
+    buildRain();
     resize();
 
-    // Mouse Tracking Event Listener
-    function onPointerMove(e) {
-      var r = canvas.getBoundingClientRect();
-      MOUSE.tx = ((e.clientX - r.left) / r.width - 0.5) * 1.5;
-      MOUSE.ty = ((e.clientY - r.top) / r.height - 0.5) * 1.5;
-    }
-
-    window.addEventListener('pointermove', onPointerMove, { passive: true });
-    window.addEventListener('resize', resize, { passive: true });
-
+    var io = null;
     if (window.IntersectionObserver && !reduced) {
-      var io = new IntersectionObserver(function (entries) {
+      io = new IntersectionObserver(function (entries) {
         entries.forEach(function (entry) {
           var vis = entry.isIntersecting && !document.hidden;
           if (vis && !running) startNow();
@@ -579,21 +570,30 @@
         });
       }, { threshold: 0.05 });
       io.observe(canvas);
-      setTimeout(startNow, 150);
+      setTimeout(startNow, 400);
     } else if (!reduced) {
       startNow();
     } else {
       render(0);
     }
 
+    function onPointerMove(e) {
+      var r = canvas.getBoundingClientRect();
+      PAR.tx = ((e.clientX - r.left) / r.width - 0.5) * 0.3;
+      PAR.ty = ((e.clientY - r.top) / r.height - 0.5) * 0.3;
+    }
+
+    window.addEventListener('pointermove', onPointerMove, { passive: true });
+    window.addEventListener('resize', resize, { passive: true });
+
     cleanupActiveAnimation = function () {
       stopNow();
       window.removeEventListener('pointermove', onPointerMove);
       window.removeEventListener('resize', resize);
+      if (io) io.disconnect();
     };
   }
 
-  // Global Registration
   global.initHeroNeuralAnimation = initHeroNeural;
 
   if (document.readyState === 'loading') {

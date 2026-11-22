@@ -132,7 +132,7 @@ export default function ServiceDetail({ serviceSlug, onBack, onSelectService }) 
       {service.intro && (
         <section className="service-section">
           <div className="service-overview">
-            <div className="reveal revealed">
+            <div className="reveal">
               <span className="section-tag">Overview</span>
               <h2 className="section-title" style={{ fontSize: 'clamp(24px, 3vw, 36px)', marginBottom: '6px' }}>
                 {service.title}
@@ -147,7 +147,7 @@ export default function ServiceDetail({ serviceSlug, onBack, onSelectService }) 
               )}
             </div>
             {gallery.length > 0 && (
-              <div className="service-gallery reveal revealed">
+              <div className="service-gallery reveal">
                 {gallery.slice(0, 3).map((img, idx) => (
                   <div key={idx}>
                     <img src={img} alt={`${service.title} — ${idx + 1}`} loading="lazy" />
@@ -163,7 +163,7 @@ export default function ServiceDetail({ serviceSlug, onBack, onSelectService }) 
         <section className="service-section" style={{ paddingTop: 0 }}>
           <div className="service-grid-2">
             {features.length > 0 && (
-              <div className="svc-list-card reveal revealed">
+              <div className="svc-list-card reveal">
                 <h4>Features</h4>
                 <ul>
                   {features.map((feature, idx) => (
@@ -180,7 +180,7 @@ export default function ServiceDetail({ serviceSlug, onBack, onSelectService }) 
             )}
 
             {benefits.length > 0 && (
-              <div className="svc-list-card reveal revealed">
+              <div className="svc-list-card reveal">
                 <h4>Benefits</h4>
                 <ul>
                   {benefits.map((benefit, idx) => (
@@ -207,7 +207,7 @@ export default function ServiceDetail({ serviceSlug, onBack, onSelectService }) 
               </div>
               <div className="service-grid-3">
                 {usecases.map((usecase, idx) => (
-                  <div key={idx} className="svc-list-card reveal revealed">
+                  <div key={idx} className="svc-list-card reveal">
                     <ul>
                       <li>
                         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
@@ -227,7 +227,7 @@ export default function ServiceDetail({ serviceSlug, onBack, onSelectService }) 
 
       {steps.length > 0 && (
         <section className="service-section" style={{ paddingTop: 0 }}>
-          <div className="section-head reveal revealed">
+          <div className="section-head reveal">
             <span className="section-tag">Our Approach</span>
             <h2 className="section-title" style={{ fontSize: 'clamp(22px, 3vw, 32px)' }}>
               From Idea to Impact
@@ -235,7 +235,7 @@ export default function ServiceDetail({ serviceSlug, onBack, onSelectService }) 
           </div>
           <div className="service-steps">
             {steps.map((step, idx) => (
-              <div key={idx} className="service-step reveal revealed">
+              <div key={idx} className="service-step reveal">
                 <div className="ss-num">{String(idx + 1).padStart(2, '0')}</div>
                 <h4>{step.title || (typeof step === 'string' ? step : '')}</h4>
                 <p>{step.desc || ''}</p>
@@ -246,7 +246,7 @@ export default function ServiceDetail({ serviceSlug, onBack, onSelectService }) 
       )}
 
       <section className="service-section" style={{ paddingTop: 0 }}>
-        <div className="service-cta reveal revealed">
+        <div className="service-cta reveal">
           <h3>Ready to {service.title}?</h3>
           <p>Let's discuss how our proprietary AI model can be deployed for your business — securely, privately, and fast.</p>
           <div className="cta-actions">
@@ -288,7 +288,7 @@ export default function ServiceDetail({ serviceSlug, onBack, onSelectService }) 
 
       {moreServices.length > 0 && (
         <section className="service-section" style={{ paddingTop: 0 }}>
-          <div className="section-head reveal revealed">
+          <div className="section-head reveal">
             <span className="section-tag">More Services</span>
             <h2 className="section-title" style={{ fontSize: 'clamp(22px, 3vw, 32px)' }}>
               Explore Other Services
@@ -296,7 +296,7 @@ export default function ServiceDetail({ serviceSlug, onBack, onSelectService }) 
           </div>
           <div className="more-services">
             {moreServices.map((s) => (
-              <div key={s.id} className="ms-card reveal revealed">
+              <div key={s.id} className="ms-card reveal">
                 <div className="ms-ic">{s.icon}</div>
                 <h4>{s.title}</h4>
                 <p>{s.description}</p>

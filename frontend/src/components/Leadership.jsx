@@ -16,19 +16,23 @@ export default function Leadership() {
   return (
     <section id="leadership" className="section-alt">
       <div className="leadership-wrap">
-        <div className="section-head center reveal revealed">
+        <div className="section-head center reveal">
           <span className="section-tag">{settings.leadership_tag || 'LEADERSHIP'}</span>
           <h2 className="section-title">{settings.leadership_title || 'The Minds Behind ABC AI System'}</h2>
           <p className="section-desc">{settings.leadership_sub || '6 leaders — Advisors & Core Team'}</p>
         </div>
 
-        <div className="reveal revealed">
+        <div className="reveal">
           {advisors && advisors.length > 0 && (
             <>
               <h3 className="leadership-group-title">{settings.advisor_title || 'Advisory Panel'}</h3>
               <div className="member-grid-3">
-                {advisors.map((member) => (
-                  <div key={member.id} className="member-card reveal revealed">
+                {advisors.map((member, idx) => (
+                  <div
+                    key={member.id}
+                    className="member-card reveal"
+                    style={{ transitionDelay: `${(idx % 4) * 90}ms` }}
+                  >
                     <div className="member-photo">
                       <span className="avatar-init">{getInitials(member.name)}</span>
                     </div>
@@ -38,8 +42,8 @@ export default function Leadership() {
                       <p className="member-bio">{member.bio}</p>
                       {Array.isArray(member.tags) && member.tags.length > 0 && (
                         <div className="member-tags">
-                          {member.tags.slice(0, 3).map((tag, idx) => (
-                            <span key={idx}>{typeof tag === 'string' ? tag : tag.title || tag.key}</span>
+                          {member.tags.slice(0, 3).map((tag, tIdx) => (
+                            <span key={tIdx}>{typeof tag === 'string' ? tag : tag.title || tag.key}</span>
                           ))}
                         </div>
                       )}
@@ -56,8 +60,12 @@ export default function Leadership() {
                 {settings.core_title || 'Core Team'}
               </h3>
               <div className="member-grid-3">
-                {coreTeam.map((member) => (
-                  <div key={member.id} className="member-card reveal revealed">
+                {coreTeam.map((member, idx) => (
+                  <div
+                    key={member.id}
+                    className="member-card reveal"
+                    style={{ transitionDelay: `${(idx % 4) * 90}ms` }}
+                  >
                     <div className="member-photo">
                       <span className="avatar-init">{getInitials(member.name)}</span>
                     </div>
@@ -67,20 +75,20 @@ export default function Leadership() {
                       <p className="member-bio">{member.bio}</p>
                       {Array.isArray(member.tags) && member.tags.length > 0 && (
                         <div className="member-tags">
-                          {member.tags.slice(0, 3).map((tag, idx) => (
-                            <span key={idx}>{typeof tag === 'string' ? tag : tag.title || tag.key}</span>
+                          {member.tags.slice(0, 3).map((tag, tIdx) => (
+                            <span key={tIdx}>{typeof tag === 'string' ? tag : tag.title || tag.key}</span>
                           ))}
                         </div>
                       )}
                       {Array.isArray(member.links) && member.links.length > 0 && (
                         <div className="member-links">
-                          {member.links.map((link, idx) => {
+                          {member.links.map((link, lIdx) => {
                             let label = link;
                             try {
                               label = new URL(link).hostname || link;
                             } catch {}
                             return (
-                              <a key={idx} href={link} target="_blank" rel="noopener noreferrer">
+                              <a key={lIdx} href={link} target="_blank" rel="noopener noreferrer">
                                 {label}
                               </a>
                             );
@@ -96,7 +104,7 @@ export default function Leadership() {
         </div>
 
         {founderQuotes && founderQuotes.length > 0 && (
-          <div className="founder-box reveal revealed">
+          <div className="founder-box reveal">
             <span className="fb-quote-mark">"</span>
             <div className="section-head" style={{ marginBottom: '18px' }}>
               <span className="section-tag">{settings.founder_title || 'From the Founder'}</span>
@@ -108,10 +116,10 @@ export default function Leadership() {
             </blockquote>
             <div className="fb-by">
               <span className="fb-avatar">
-                {getInitials(settings.founder_quote_by || 'Shakhawat Hossain')}
+                {getInitials(settings.founder_quote_by || 'Tariqul Islam')}
               </span>
               <div>
-                <strong>{settings.founder_quote_by || 'Shakhawat Hossain, Managing Director'}</strong>
+                <strong>{settings.founder_quote_by || 'Tariqul Islam, Managing Director & Chief Architect'}</strong>
                 <span>Founder & Managing Director, ABC AI System Limited</span>
               </div>
             </div>

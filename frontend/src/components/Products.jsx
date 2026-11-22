@@ -3,12 +3,12 @@ import { useSite } from '../context/SiteContext';
 import ProductDemo from './ProductDemo';
 
 const mpIcons = {
-  Blens: '🎙️',
-  Sohojogi: '🗣️',
-  'Booking Model': '🧾',
-  'Proxy Eye': '👁️',
-  'Validex AI': '📜',
-  AgroRx: '🌾',
+  'Nexus Cognitive Executive': '🎙️',
+  'VaniTrade Terminal': '🗣️',
+  'WebTensor Reconciler': '🧾',
+  'VisionShield QC': '👁️',
+  'LexTrade Compliance': '📜',
+  'TerraMind Agronomics': '🌾',
 };
 
 export default function Products() {
@@ -33,14 +33,14 @@ export default function Products() {
   return (
     <section id="products" className="section products-section">
       <div className="products-head">
-        <div className="section-head center reveal revealed">
-          <span className="section-tag">{settings.products_tag || 'PRODUCT PORTFOLIO'}</span>
-          <h2 className="section-title">{settings.products_title || 'Our Flagship AI Products'}</h2>
+        <div className="section-head center reveal">
+          <span className="section-tag">{settings.products_tag || 'PROPRIETARY PLATFORMS'}</span>
+          <h2 className="section-title">{settings.products_title || 'Our Flagship Turnkey Systems'}</h2>
           <p className="section-desc">{settings.products_sub || ''}</p>
         </div>
       </div>
 
-      <div className="product-slider reveal revealed" data-slider="true" data-auto="8000">
+      <div className="product-slider reveal" data-slider="true" data-auto="8000">
         <div className="product-slide active">
           <div className="product-slide-grid">
             <div className="product-copy">
@@ -111,17 +111,21 @@ export default function Products() {
 
       {moreProducts && moreProducts.length > 0 && (
         <div className="more-products-wrap" style={{ marginTop: '56px' }}>
-          <div className="more-products-inner reveal revealed">
+          <div className="more-products-inner reveal">
             <div className="section-head center" style={{ marginBottom: 0 }}>
-              <span className="section-tag">{settings.more_products_tag || 'MORE PRODUCTS'}</span>
+              <span className="section-tag">{settings.more_products_tag || 'EXPANDED ECOSYSTEM'}</span>
               <h2 className="section-title" style={{ fontSize: 'clamp(24px, 3vw, 34px)' }}>
-                {settings.more_products_title || '6 More Powerful Solutions'}
+                {settings.more_products_title || '6 Specialized Enterprise Solutions'}
               </h2>
             </div>
 
             <div className="more-products-grid">
-              {moreProducts.map((product) => (
-                <div key={product.id} className="mp-card">
+              {moreProducts.map((product, idx) => (
+                <div
+                  key={product.id}
+                  className="mp-card reveal"
+                  style={{ transitionDelay: `${(idx % 6) * 80}ms` }}
+                >
                   <div className="mp-logo">{mpIcons[product.name] || '🧩'}</div>
                   <h4>{product.name}</h4>
                   {product.tag && <span className="mp-tag">{product.tag}</span>}

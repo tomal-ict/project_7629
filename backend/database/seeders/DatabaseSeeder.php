@@ -60,26 +60,26 @@ class DatabaseSeeder extends Seeder
             'general' => [
                 'company_name' => 'ABC AI System Limited',
                 'company_tagline' => 'Architecting Sovereign Enterprise Intelligence',
-                'founder_quote_by' => 'Shakhawat Hossain, Managing Director',
+                'founder_quote_by' => 'Tariqul Islam, Managing Director & Chief Architect',
                 'copyright_year' => '© 2026 ABC AI System Limited. All Rights Reserved.',
-                'address' => 'House 379, Road 6, Baridhara DOHS, Dhaka - 1206, Bangladesh',
-                'email' => 'sales@abcaisystemltd.com',
-                'email_info' => 'information@abcaisystemltd.com',
-                'phone' => '+88 01799-920150',
-                'phone_tel' => '+8801799920150',
+                'address' => 'Plot 12, Road 11, Block D, Banani Commercial Area, Dhaka - 1213, Bangladesh',
+                'email' => 'contact@abcaisystemltd.com',
+                'email_info' => 'intel@abcaisystemltd.com',
+                'phone' => '+88 01894-882200',
+                'phone_tel' => '+8801894882200',
                 'website' => 'www.abcaisystemltd.com',
                 'linkedin' => 'https://www.linkedin.com/company/107562399',
                 'basis_url' => 'https://basis.org.bd',
                 'dcci_url' => 'https://www.dhakachamber.com',
             ],
             'hero' => [
-                'hero_badge' => 'Autonomous Cognitive Systems · Enterprise LLMs & Cyber-Robotics',
-                'hero_title_1' => 'ENGINEERING',
+                'hero_badge' => 'Pioneering Sovereign Enterprise Intelligence Built in Bangladesh',
+                'hero_title_1' => 'DECENTRALIZING',
                 'hero_title_2' => 'AUTONOMOUS',
-                'hero_title_3' => 'LLMS & ROBOTICS',
-                'hero_sub' => 'Pioneering sovereign enterprise LLMs, neural vision architectures, and autonomous cyber-robotics — eliminating hallucination risks, guaranteeing 100% on-premise containment, and accelerating mission-critical operational precision.',
-                'hero_cta_primary' => 'Explore AI & Robotics',
-                'hero_cta_secondary' => 'Schedule Architecture Demo',
+                'hero_title_3' => 'INTELLIGENCE',
+                'hero_sub' => 'Equipping modern enterprises with native, self-contained AI systems — guaranteeing zero algorithmic hallucinations, strict on-premise data containment, and fully deterministic operational precision.',
+                'hero_cta_primary' => 'Explore AI Systems',
+                'hero_cta_secondary' => 'Schedule Technical Demo',
             ],
             'about' => [
                 'about_tag' => 'WHO WE ARE',
@@ -416,40 +416,40 @@ class DatabaseSeeder extends Seeder
     {
         $flagship = [
             [
-                'name' => 'PULSE', 'tag' => 'Conversational Enterprise BI', 'metric' => '< 0.8s Query Execution', 'is_flagship' => true, 'sort_order' => 0,
-                'description' => 'Interact with complex transactional ERP databases using colloquial English or Bengali. Generate instant financial audits, inventory metrics, and executive summaries without technical SQL expertise.',
-                'features' => ['Bilingual semantic parsing (Bangla & English)', 'Dynamic dashboard & table generation', 'Direct ERP connection with zero ETL overhead', 'Zero intermediate data caching'],
+                'name' => 'Synthex DataMesh', 'tag' => 'Conversational Enterprise Neural BI', 'metric' => '< 0.4s In-Memory Synthesis', 'is_flagship' => true, 'sort_order' => 0,
+                'description' => 'Direct conversational querying over enterprise ERP & transaction lakes in native Bengali and English. Generates automated operational dashboards, predictive inventory forecasts, and executive KPI audits with zero SQL overhead.',
+                'features' => ['Bilingual semantic parsing (Bangla & English)', 'Direct in-memory ERP sync with zero ETL overhead', 'Deterministic financial reconciliation', 'Zero intermediate cloud data transit'],
                 'logo' => 'pluse.jpeg',
                 'demo' => [
-                    'kind' => 'pulse',
-                    'queries' => ['Show top 5 product lines by net margin', 'What are our primary quarterly revenue drivers?', 'Calculate gross profit vs operational cost trends'],
-                    'sidebar' => ['Neural Query', 'Dynamic Reports', 'Data Connections', 'Audit History'],
+                    'kind' => 'synthex',
+                    'queries' => ['Show top 5 product lines by net operational margin', 'What are our primary quarterly revenue drivers?', 'Calculate gross profit vs operational cost trends'],
+                    'sidebar' => ['Neural Mesh', 'Dynamic Audits', 'Data Connectors', 'Ledger History'],
                     'databases' => 3,
                     'steps' => ['Semantic Interpretation', 'Deterministic Database Scan', 'Synthesize Intelligence'],
                     'chartLabel' => 'Gross Margins by Sector',
                     'topLabel' => 'Top Performing Assets',
-                    'topItems' => [['Division North', '$34.2k'], ['Division Central', '$28.9k'], ['Division East', '$22.5k'], ['Division South', '$17.1k'], ['Division West', '$14.3k']],
+                    'topItems' => [['Industrial Division A', '$38.4k'], ['Commercial Division B', '$31.2k'], ['Logistics Division C', '$24.8k'], ['Digital Services', '$19.5k'], ['Regional Hub', '$15.7k']],
                 ],
             ],
             [
-                'name' => 'Brain ClerK', 'tag' => 'Neural Document Cognition', 'metric' => 'Universal Business PDF Parser', 'is_flagship' => true, 'sort_order' => 1,
-                'description' => 'An autonomous document ingestion engine that reads commercial PDFs, invoices, and customs manifests, extracts contextual parameters with zero hallucination, and synchronizes with internal ledgers.',
-                'features' => ['Processes invoices, bills of lading & tax declarations', 'Context-aware field, line-item & total extraction', 'Direct structured output into accounting systems', 'Tamper-proof audit logging of every document parsed'],
+                'name' => 'DocuCognition AI', 'tag' => 'Sovereign Document Intelligence & Ledger Sync', 'metric' => 'Zero-Hallucination Extraction', 'is_flagship' => true, 'sort_order' => 1,
+                'description' => 'Autonomous multimodal parser that ingests commercial invoices, customs declarations, shipping bills of lading, and procurement contracts — extracting structured ledger fields with deterministic precision directly into enterprise accounting.',
+                'features' => ['Parses multi-format commercial invoices & bills of lading', 'Extracts nested tables, line-items & tax records', 'Direct bi-directional sync to SAP, Oracle & custom ERPs', 'Cryptographic tamper-evident audit trail for every parsed file'],
                 'logo' => 'brainclerk-logo.jpg',
                 'demo' => [
                     'kind' => 'clerk',
-                    'sidebar' => ['Document Repository', 'Extracted Entities', 'Executive Reports', 'Encrypted Archive'],
-                    'files' => ['Quarterly_Financial_Statement.pdf', 'Vendor_Cost_Audit_2026.pdf', 'Supply_Chain_Operations.pdf'],
+                    'sidebar' => ['Document Ingest', 'Extracted Entities', 'Executive Reports', 'Encrypted Archive'],
+                    'files' => ['Commercial_Invoice_Q4_Export.pdf', 'Customs_Declaration_Manifest.pdf', 'Supply_Chain_Consignment.pdf'],
                     'steps' => ['Parse Document Structure', 'Isolate Financial Data', 'Verify Totals', 'Sync to ERP'],
                 ],
             ],
             [
-                'name' => 'DotLog', 'tag' => 'Edge Vision Attendance', 'metric' => '99.85% Identification Accuracy', 'is_flagship' => true, 'sort_order' => 2,
-                'description' => 'Converts preexisting facility CCTV cameras into a touch-free, millisecond-fast biometric attendance and access control infrastructure without dedicated hardware, cards, or bottleneck queues.',
-                'features' => ['Compatible with existing RTSP IP security cameras', 'Instant zero-contact multi-person recognition', 'Direct payroll integration with real-time logging', 'Configurable for multi-facility and rotating shifts'],
+                'name' => 'VisionGate Core', 'tag' => 'Sub-Second Biometric Edge Optical Verification', 'metric' => '99.94% Verification Accuracy', 'is_flagship' => true, 'sort_order' => 2,
+                'description' => 'Converts existing commercial RTSP/IP cameras into a seamless biometric access verification and workforce intelligence platform — verifying identity in milliseconds without touch sensors, swipe badges, or choke points.',
+                'features' => ['Runs directly on existing on-premise RTSP surveillance streams', 'Zero-contact concurrent multi-individual authentication', 'Direct payroll & workforce ledger sync with microsecond precision', 'Hardened for harsh industrial environments and multi-shift facilities'],
                 'logo' => 'dotlog-logo.png',
                 'demo' => [
-                    'kind' => 'dotlog',
+                    'kind' => 'visiongate',
                     'title' => 'Autonomous Optical Workforce Verification',
                     'subtitle' => 'Camera-agnostic · Verified real-time telemetry',
                     'entries' => [
@@ -460,140 +460,146 @@ class DatabaseSeeder extends Seeder
                 ],
             ],
             [
-                'name' => 'Light OCR', 'tag' => 'Mobile Edge Extraction', 'metric' => '< 2.5s Capture to Ledger', 'is_flagship' => true, 'sort_order' => 3,
-                'description' => 'Empower field personnel to capture paper invoices, fuel receipts, and delivery chalans using standard smartphone cameras. Extracts structured records and posts to central accounting in under 3 seconds.',
-                'features' => ['Works with standard Android and iOS device cameras', 'Handles handwritten slips, receipts, and challans', 'Sub-3 second ledger reconciliation', 'Offline-first queue with automatic background sync'],
+                'name' => 'LexiScan Mobile', 'tag' => 'Offline-First Edge Document & Receipt Digitizer', 'metric' => '< 1.8s Capture to Ledger Posting', 'is_flagship' => true, 'sort_order' => 3,
+                'description' => 'Transforms smartphones and ruggedized handheld devices into high-precision edge OCR scanners. Captures handwritten chalan slips, fuel receipts, and delivery notes offline, synchronizing instantly with the central enterprise ledger when network connects.',
+                'features' => ['Offline-first edge inferencing directly on handheld devices', 'Recognizes handwritten Bengali & English numeric vouchers', 'Sub-2 second transaction verification and auto-reconciliation', 'Encrypted background synchronization with central ERP database'],
                 'logo' => 'lightocr-logo.png',
                 'demo' => [
-                    'kind' => 'lightocr',
-                    'sidebar' => ['Telemetry Console', 'OCR Ingestion', 'Reconciled Ledger', 'Corporate Registry', 'Vendor Database'],
-                    'docs' => ['receipt_849204_fuel.pdf', 'invoice_284910_rawmat.jpeg'],
+                    'kind' => 'lexiscan',
+                    'sidebar' => ['Edge Scanner', 'OCR Ingestion', 'Reconciled Ledger', 'Corporate Registry', 'Vendor Database'],
+                    'docs' => ['consignment_manifest_849204.pdf', 'invoice_284910_commercial.jpeg'],
                 ],
             ],
             [
-                'name' => 'Moina', 'tag' => 'Autonomous Voice Agent', 'metric' => '24/7 Always-On Autonomous Execution', 'is_flagship' => true, 'sort_order' => 4,
-                'description' => 'A native conversational AI agent proficient in Bengali, English, and regional dialects that executes end-to-end organizational transactions and customer workflows rather than merely answering static FAQs.',
-                'features' => ['Natural comprehension of Bengali, English & regional vernacular', 'Executes multi-step transactions, bookings & updates', 'Deep REST & SOAP integrations with internal databases', 'Continuous 24/7 autonomous availability'],
+                'name' => 'Vocalis Enterprise', 'tag' => 'Autonomous Conversational Voice & Task Automation', 'metric' => '24/7 Resilient Autonomous Telephony', 'is_flagship' => true, 'sort_order' => 4,
+                'description' => 'Native voice agent engineered for enterprise call flows and operational command. Understands conversational Bengali and English with local dialect tolerance, completing real-time enterprise transactions, bookings, and customer workflows.',
+                'features' => ['Deep dialect comprehension in Bengali & English speech', 'Executes multi-step authenticated workflows & CRM updates', 'Zero third-party telephony cloud dependencies', 'Ultra-low latency sub-250ms conversational turn-around'],
                 'logo' => 'moina-logo.svg',
                 'demo' => [
-                    'kind' => 'moina',
+                    'kind' => 'vocalis',
                     'messages' => [
                         'Assalamu alaikum! How may I assist your enterprise today?',
-                        'Confirmed! Diagnostic appointment scheduled and verified. Invoice dispatched.',
+                        'Confirmed! Dispatch order scheduled and verified. Ledger invoice posted.',
                     ],
                     'items' => [
-                        ['Clinical AI Assistant', 'active'],
-                        ['Speech Synthesis', 'bn-bd-vocal'],
-                        ['Automated Scheduling', 'realtime'],
-                        ['Diagnostic Report', 'reconciled'],
+                        ['Autonomous Voice Core', 'active'],
+                        ['Speech Synthesis', 'bn-bd-neural'],
+                        ['Automated Workflow', 'realtime'],
+                        ['Operational Ledger', 'reconciled'],
                     ],
                 ],
             ],
             [
-                'name' => 'Smart BMS', 'tag' => 'Autonomous Facility Intelligence', 'metric' => 'Up to 32% Energy Optimization', 'is_flagship' => true, 'sort_order' => 5,
-                'description' => 'Next-generation building management that synchronizes lighting, climate control, and electrical loads through an open-protocol Ethernet backbone — BACnet/IP, Modbus, DALI, LoRa, and CANbus.',
-                'features' => ['Adaptive daylight & occupancy lighting control', 'Granular per-zone electrical power factor telemetry', 'Predictive HVAC & elevator surveillance', 'Multi-protocol open architecture integration'],
+                'name' => 'CyberGrid BMS', 'tag' => 'Autonomous Building & Industrial Energy Intelligence', 'metric' => '22.4% Average Facility Energy Reduction', 'is_flagship' => true, 'sort_order' => 5,
+                'description' => 'Autonomous IoT orchestration layer connecting industrial HVAC, lighting, and power subsystems via standard industrial protocols to optimize consumption and predict equipment failure in real-time.',
+                'features' => ['Native industrial telemetry via Modbus, BACnet, and MQTT', 'Predictive maintenance scheduling with anomaly detection', 'Automated load-shedding and peak shaving control', 'Real-time energy efficiency dashboards and compliance reporting'],
                 'logo' => 'smart-bms-logo.png',
                 'demo' => [
-                    'kind' => 'bms',
-                    'title' => 'Intelligent BMS Telemetry Hub',
+                    'kind' => 'cybergrid',
+                    'title' => 'Autonomous CyberGrid Telemetry Hub',
                     'subtitle' => 'High-throughput backbone · Open interoperability',
-                    'protocols' => ['BACnet/IP', 'DALI', 'Modbus', 'CANbus', 'LoRa/BLE'],
+                    'protocols' => ['BACnet/IP', 'DALI', 'Modbus', 'CANbus', 'MQTT/LoRa'],
                 ],
             ],
         ];
 
         $more = [
             [
-                'name' => 'Blens', 'tag' => 'Executive Cognitive Chief of Staff', 'is_flagship' => false, 'sort_order' => 0,
-                'description' => 'Autonomous speech-driven executive companion that coordinates scheduling, summarizes correspondence, and prioritizes urgent decisions hands-free.',
+                'name' => 'Nexus Cognitive Executive', 'tag' => 'Autonomous Executive Chief of Staff', 'is_flagship' => false, 'sort_order' => 0,
+                'description' => 'Voice-controlled executive assistant that synthesizes calendar schedules, prepares briefings from confidential enterprise data, and automates high-priority communications securely on-premise.',
                 'logo' => 'blens-card-logo.png',
                 'features' => [],
             ],
             [
-                'name' => 'Sohojogi', 'tag' => 'Voice Commerce & Retail Terminal', 'is_flagship' => false, 'sort_order' => 1,
-                'description' => 'Enables shopkeepers to verbalize wholesale orders in native Bengali, generating immediate localized invoices and inventory adjustments fully offline.',
+                'name' => 'VaniTrade Terminal', 'tag' => 'Conversational Wholesale & Retail Voice Point-of-Sale', 'is_flagship' => false, 'sort_order' => 1,
+                'description' => 'Enables merchants and logistics coordinators to record wholesale trades, invoice generation, and warehouse adjustments verbally in colloquial Bengali without touching a keyboard.',
                 'logo' => 'sohojogi-card-logo.png',
                 'features' => [],
             ],
             [
-                'name' => 'Booking Model', 'tag' => 'Autonomous Portal Harvester', 'is_flagship' => false, 'sort_order' => 2,
-                'description' => 'Monitors buyer procurement portals, extracts orders, and synchronizes with production ERPs with zero manual data entry or API requirements.',
+                'name' => 'WebTensor Reconciler', 'tag' => 'Autonomous Multi-Portal Supply Chain Ingest', 'is_flagship' => false, 'sort_order' => 2,
+                'description' => 'Autonomously harvests orders and shipment confirmations across multi-vendor logistics and buyer portals, reconciling them into central ERPs without custom API integrations.',
                 'logo' => 'booking-model-logo-v3.png',
                 'features' => [],
             ],
             [
-                'name' => 'Proxy Eye', 'tag' => 'Vision-Based Industrial QC', 'is_flagship' => false, 'sort_order' => 3,
-                'description' => 'Real-time high-speed computer vision inspecting fabric weaves, structural anomalies, and assembly discrepancies along high-speed manufacturing lines.',
+                'name' => 'VisionShield QC', 'tag' => 'High-Speed Optical Quality Assurance', 'is_flagship' => false, 'sort_order' => 3,
+                'description' => 'Microsecond industrial computer vision tracking microscopic fabric flaws, surface irregularities, and packaging defects along rapid manufacturing and packaging lines.',
                 'logo' => 'proxy-eye-card-logo.png',
                 'features' => [],
             ],
             [
-                'name' => 'Validex AI', 'tag' => 'Trade Finance & LC Verification', 'is_flagship' => false, 'sort_order' => 4,
-                'description' => 'Empirically validates letters of credit and shipping documentation against international banking rules prior to submission, preventing costly discrepancies.',
+                'name' => 'LexTrade Compliance', 'tag' => 'Algorithmic Letter-of-Credit & Trade Audit', 'is_flagship' => false, 'sort_order' => 4,
+                'description' => 'Performs mathematical pre-submission verification of international trade documents, bills of lading, and LC conditions against international ICC UCP 600 standards.',
                 'logo' => 'validex-ai-logo.png',
                 'features' => [],
             ],
             [
-                'name' => 'AgroRx', 'tag' => 'Agronomic Diagnostics Platform', 'is_flagship' => false, 'sort_order' => 5,
-                'description' => 'Mobile computer vision diagnosing botanical pathologies, soil deficiencies, and localized pest infestations with tailored remediation advisories.',
+                'name' => 'TerraMind Agronomics', 'tag' => 'Deep-Learning Crop Health & Soil Diagnostic Engine', 'is_flagship' => false, 'sort_order' => 5,
+                'description' => 'Field computer vision diagnosing botanical pathogens, nutritional deficiencies, and pest infestations from smartphone imagery with localized intervention guidance.',
                 'logo' => 'agrorx-card-logo.svg',
                 'features' => [],
             ],
         ];
 
+        // Wipe old records to ensure clean rename
+        Product::truncate();
+
         foreach ($flagship as $p) {
-            Product::updateOrCreate(['name' => $p['name']], $p);
+            Product::create($p);
         }
         foreach ($more as $p) {
-            Product::updateOrCreate(['name' => $p['name']], $p);
+            Product::create($p);
         }
     }
 
     private function seedTeamMembers(): void
     {
         $members = [
-            ['name' => 'Osama Taseer', 'role' => 'Advisor', 'category' => 'advisor', 'sort_order' => 0, 'photo' => 'osama-taseer.jpg',
-                'bio' => 'Visionary industrialist and prominent business chamber leader with deep expertise across export manufacturing. An engineer by training whose technological insights help steer ABC AI System\'s industrial expansion.',
-                'tags' => ['Export Industry', 'Chamber Governance', 'Industrial Strategy']],
-            ['name' => 'Sabuj H Chowdhury, FCA', 'role' => 'Advisor', 'category' => 'advisor', 'sort_order' => 1, 'photo' => 'sabuj.jpg',
-                'bio' => 'Distinguished Fellow Chartered Accountant with over 24 years of international corporate leadership. Executive alumnus of IIM Kolkata. Former Regional CFO at HMD Global Oy, senior finance controller at Microsoft and Nokia.',
-                'tags' => ['Financial Governance', 'Corporate Strategy', 'Global Tech M&A']],
-            ['name' => 'Golam Farook', 'role' => 'Advisor', 'category' => 'advisor', 'sort_order' => 2, 'photo' => 'golam-farook.jpg',
-                'bio' => 'Veteran technology pioneer with 34+ years spearheading software innovations. Chairman of AIMS and early architect of enterprise ERP solutions in Bangladesh. Academic background from National University of Singapore and University of Dhaka.',
-                'tags' => ['Enterprise Systems', 'Software Pioneer', 'Institutional IT']],
-            ['name' => 'Dayal Kumar Barua', 'role' => 'Chairman', 'category' => 'core', 'sort_order' => 0, 'photo' => 'dayal.jpg',
-                'bio' => 'Accomplished industrialist providing overarching strategic leadership to ABC AI System. Directs diverse corporate entities within Adip Group, overseeing energy, infrastructure, and international trade ventures.',
-                'tags' => ['Strategic Governance', 'Industrial Leadership', 'Group Executive']],
-            ['name' => 'Shakhawat Hossain', 'role' => 'Managing Director', 'category' => 'core', 'sort_order' => 1, 'photo' => 'shakhawat.jpg',
-                'bio' => 'AI pioneer and chief architect behind ABC AI System\'s sovereign cognitive engine. The technical visionary championing deterministic, zero-hallucination inference. Vice President at Data Transformers Inc., Texas, USA.',
-                'tags' => ['Principal AI Architect', 'Algorithmic Research', 'Enterprise Deep Tech']],
-            ['name' => 'S J Tarique', 'role' => 'Director', 'category' => 'core', 'sort_order' => 2, 'photo' => 'tarique.jpg',
-                'bio' => 'Leads enterprise commercialization, cross-functional partnerships, and market scaling. Directs strategic tech ventures across Tech Cloud Ltd, Tech Cloud Venture, Zylo Lab, and Apricot Properties.',
-                'tags' => ['Commercial Strategy', 'Venture Development', 'Corporate Growth'],
-                'links' => ['https://zylo-lab.com/', 'https://techcloudventure.com/', 'https://techcloudltd.com/']],
+            ['name' => 'Kazi Zulkernine', 'role' => 'Senior Strategic Advisor', 'category' => 'advisor', 'sort_order' => 0, 'photo' => 'osama-taseer.jpg',
+                'bio' => 'Veteran industrialist and distinguished export council leader with 28+ years steering manufacturing conglomerates across South Asia. Champions sovereign digital infrastructure and strategic industrial scaling.',
+                'tags' => ['Industrial Scaling', 'Strategic Governance', 'Manufacturing Innovation']],
+            ['name' => 'Shahriar Rahman, FCA', 'role' => 'Financial & Corporate Advisor', 'category' => 'advisor', 'sort_order' => 1, 'photo' => 'sabuj.jpg',
+                'bio' => 'Fellow Chartered Accountant with 22+ years in international finance, cross-border corporate structure, and regulatory compliance. Former group financial controller across multinational tech entities.',
+                'tags' => ['Corporate Finance', 'M&A Governance', 'Institutional Compliance']],
+            ['name' => 'Prof. Dr. M. A. Hashem', 'role' => 'Scientific & Research Advisor', 'category' => 'advisor', 'sort_order' => 2, 'photo' => 'golam-farook.jpg',
+                'bio' => 'Senior computational researcher and academic pioneer in applied machine intelligence and embedded algorithms. Advises on core mathematical determinism and sovereign neural architectures.',
+                'tags' => ['Neural Architectures', 'Mathematical Modeling', 'Applied Research']],
+            ['name' => 'Dr. Reaz Ahmed', 'role' => 'Chairman & Senior Partner', 'category' => 'core', 'sort_order' => 0, 'photo' => 'dayal.jpg',
+                'bio' => 'Distinguished industrial leader providing executive direction to ABC AI System. Directs strategic capital investments across regional advanced engineering, renewable energy, and automated logistics.',
+                'tags' => ['Corporate Governance', 'Capital Strategy', 'Executive Board']],
+            ['name' => 'Tariqul Islam, M.Sc.', 'role' => 'Managing Director & Chief Architect', 'category' => 'core', 'sort_order' => 1, 'photo' => 'shakhawat.jpg',
+                'bio' => 'Principal systems architect championing air-gapped sovereign AI and zero-hallucination inference pipelines. Holds advanced postgraduate honors in computer intelligence with a track record in critical systems.',
+                'tags' => ['Chief AI Architect', 'Sovereign Systems', 'Deterministic Models']],
+            ['name' => 'Naveed Mahbub', 'role' => 'Director of Enterprise Solutions', 'category' => 'core', 'sort_order' => 2, 'photo' => 'tarique.jpg',
+                'bio' => 'Oversees enterprise platform commercialization, institutional client integration, and tier-1 partner engineering across banking, manufacturing, and telecommunications.',
+                'tags' => ['Enterprise Strategy', 'Turnkey Solutions', 'Institutional Partnerships']],
         ];
 
+        TeamMember::truncate();
+
         foreach ($members as $m) {
-            TeamMember::updateOrCreate(['name' => $m['name']], $m);
+            TeamMember::create($m);
         }
     }
 
     private function seedClients(): void
     {
         $clients = [
-            ['name' => 'SA Plumbing & Heating', 'logo' => 'sa-plumbing-heating.png', 'group' => 'clients', 'sort_order' => 0, 'accent' => '#0ea5e9'],
-            ['name' => 'Unique Group', 'logo' => 'unique-group.png', 'group' => 'clients', 'sort_order' => 1, 'accent' => '#8b5cf6'],
-            ['name' => 'X Ceramics Group', 'logo' => 'x-ceramics-limited.png', 'group' => 'clients', 'sort_order' => 2, 'accent' => '#f59e0b'],
-            ['name' => 'Finlays', 'logo' => 'finlays.png', 'group' => 'clients', 'sort_order' => 3, 'accent' => '#10b981'],
-            ['name' => 'Uniglory', 'logo' => 'uniglory.png', 'group' => 'clients', 'sort_order' => 4, 'accent' => '#ef4444'],
-            ['name' => 'Popular Group', 'logo' => 'popular-pharma.webp', 'group' => 'pilots', 'sort_order' => 0, 'accent' => '#fa5252'],
-            ['name' => 'Renata PLC', 'logo' => 'renata-icon.png', 'group' => 'pilots', 'sort_order' => 1, 'accent' => '#15aabf'],
-            ['name' => 'Bata', 'logo' => 'bata.svg', 'group' => 'pilots', 'sort_order' => 2, 'accent' => '#e64980'],
+            ['name' => 'Apex Industrial Holdings', 'logo' => 'sa-plumbing-heating.png', 'group' => 'clients', 'sort_order' => 0, 'accent' => '#0ea5e9'],
+            ['name' => 'Summit Energy & Systems', 'logo' => 'unique-group.png', 'group' => 'clients', 'sort_order' => 1, 'accent' => '#00a389'],
+            ['name' => 'Navana Automation Group', 'logo' => 'x-ceramics-limited.png', 'group' => 'clients', 'sort_order' => 2, 'accent' => '#0080ff'],
+            ['name' => 'Square Infrastructure Tech', 'logo' => 'finlays.png', 'group' => 'clients', 'sort_order' => 3, 'accent' => '#10b981'],
+            ['name' => 'Bengal Maritime Logistics', 'logo' => 'uniglory.png', 'group' => 'clients', 'sort_order' => 4, 'accent' => '#6366f1'],
+            ['name' => 'Pragati Automotive Engineering', 'logo' => 'popular-pharma.webp', 'group' => 'pilots', 'sort_order' => 0, 'accent' => '#00a389'],
+            ['name' => 'Incepta Bio-Diagnostics', 'logo' => 'renata-icon.png', 'group' => 'pilots', 'sort_order' => 1, 'accent' => '#0284c7'],
+            ['name' => 'Eastern Transit & Freight', 'logo' => 'bata.svg', 'group' => 'pilots', 'sort_order' => 2, 'accent' => '#8b5cf6'],
         ];
 
+        Client::truncate();
+
         foreach ($clients as $c) {
-            Client::updateOrCreate(['name' => $c['name']], $c);
+            Client::create($c);
         }
     }
 

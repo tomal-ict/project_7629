@@ -31,30 +31,30 @@ export default function Hero({ onNavigate }) {
         <div className="hero-copy">
           <div className="hero-badge">
             <span className="hero-badge-dot"></span>
-            <span>{settings.hero_badge || 'Autonomous Cognitive Systems · Enterprise LLMs & Cyber-Robotics'}</span>
+            <span>{settings.hero_badge || 'Pioneering Sovereign Enterprise Intelligence Built in Bangladesh'}</span>
           </div>
 
           <h1 className="hero-title">
-            <span className="hero-title-word">{settings.hero_title_1 || 'ENGINEERING'}</span>{' '}
+            <span className="hero-title-word">{settings.hero_title_1 || 'DECENTRALIZING'}</span>{' '}
             <span className="hero-title-word">{settings.hero_title_2 || 'AUTONOMOUS'}</span>{' '}
-            <span className="hero-title-word hero-rainbow">{settings.hero_title_3 || 'LLMS & ROBOTICS'}</span>
+            <span className="hero-title-word hero-rainbow">{settings.hero_title_3 || 'INTELLIGENCE'}</span>
           </h1>
 
           <p className="hero-sub">
             {settings.hero_sub ||
-              'Pioneering sovereign enterprise LLMs, neural vision architectures, and autonomous cyber-robotics — eliminating hallucination risks, guaranteeing 100% on-premise containment, and accelerating mission-critical operational precision.'}
+              'Equipping modern enterprises with native, self-contained AI systems — guaranteeing zero algorithmic hallucinations, strict on-premise data containment, and fully deterministic operational precision.'}
           </p>
 
           <div className="hero-actions">
             <a href="#products" className="btn">
-              {settings.hero_cta_primary || 'Explore AI & Robotics'}
+              {settings.hero_cta_primary || 'Explore AI Systems'}
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M5 12h14" />
                 <path d="m12 5 7 7-7 7" />
               </svg>
             </a>
             <a href="#contact" className="btn-outline">
-              {settings.hero_cta_secondary || 'Schedule Architecture Demo'}
+              {settings.hero_cta_secondary || 'Schedule Technical Demo'}
             </a>
           </div>
         </div>
@@ -72,44 +72,44 @@ export default function Hero({ onNavigate }) {
 
             <div className="hero-brain-core">
               <canvas className="hero-neural-canvas" id="ai-core-canvas" aria-hidden="true"></canvas>
-              <span className="ai-core-label">CYBER·NEURAL CORE</span>
+              <span className="ai-core-label">AI&nbsp;CORE</span>
               <span className="ai-core-status">
-                <span className="ai-dot"></span> ACTIVE · AIRGAPPED
+                <span className="ai-dot"></span> ONLINE
               </span>
               <span className="ai-metric m1">
-                <b className="ai-metric-key">ROBO-SYNAPSES</b>
+                <b className="ai-metric-key">NODES</b>
                 <i className="ai-metric-val" data-nodes="true">
-                  9,840
+                  8,980
                 </i>
               </span>
               <span className="ai-metric m2">
-                <b className="ai-metric-key">ATTN LOAD</b>
+                <b className="ai-metric-key">LOAD</b>
                 <i className="ai-metric-val" data-load="true">
-                  99.4%
+                  95%
                 </i>
               </span>
               <span className="ai-metric m3">
-                <b className="ai-metric-key">CONTROL LATENCY</b>
+                <b className="ai-metric-key">SYNC</b>
                 <i className="ai-metric-val" data-sync="true">
-                  11<span>ms</span>
+                  32<span>ms</span>
                 </i>
               </span>
             </div>
 
             <span className="hero-float-badge b1">
-              <span className="dot" style={{ background: '#06b6d4' }}></span> Zero-Hallucination LLM Inferencing
+              <span className="dot"></span> 0.0% Hallucinations
             </span>
             <span className="hero-float-badge b2">
-              <span className="dot" style={{ background: '#2563eb' }}></span> 100% Air-Gapped Enclave
+              <span className="dot"></span> 100% On-Premise
             </span>
             <span className="hero-float-badge b3">
-              <span className="dot" style={{ background: '#10b981' }}></span> Autonomous Cyber-Robotics
+              <span className="dot"></span> Sovereign Deep Tech
             </span>
             <span className="hero-float-badge b4">
-              <span className="dot" style={{ background: '#8b5cf6' }}></span> Proprietary Transformer Core
+              <span className="dot"></span> Native Neural Engine
             </span>
             <span className="hero-float-badge b5">
-              <span className="dot" style={{ background: '#f59e0b' }}></span> 20+ Turnkey Enterprise Deployments
+              <span className="dot"></span> 15+ Enterprise Ready
             </span>
           </div>
         </div>

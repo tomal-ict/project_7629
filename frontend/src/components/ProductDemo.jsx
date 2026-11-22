@@ -26,7 +26,7 @@ export default function ProductDemo({ demo, productName }) {
         )}
 
         <div className="demo-main">
-          {kind === 'pulse' ? (
+          {kind === 'pulse' || kind === 'synthex' ? (
             <>
               {d.chartLabel && <div className="demo-label">{d.chartLabel}</div>}
               <div className="demo-hbars">
@@ -52,7 +52,7 @@ export default function ProductDemo({ demo, productName }) {
                 </>
               )}
             </>
-          ) : kind === 'clerk' && Array.isArray(d.files) ? (
+          ) : (kind === 'clerk' || kind === 'docucognition') && Array.isArray(d.files) ? (
             <>
               <div className="demo-label">Documents</div>
               <div className="demo-rows">
@@ -79,7 +79,7 @@ export default function ProductDemo({ demo, productName }) {
                 </div>
               )}
             </>
-          ) : kind === 'dotlog' && Array.isArray(d.entries) ? (
+          ) : (kind === 'dotlog' || kind === 'visiongate') && Array.isArray(d.entries) ? (
             <>
               <div className="demo-label">{d.subtitle || 'Real-time logs'}</div>
               <table className="demo-table">
@@ -105,7 +105,7 @@ export default function ProductDemo({ demo, productName }) {
                 </tbody>
               </table>
             </>
-          ) : kind === 'lightocr' && Array.isArray(d.docs) ? (
+          ) : (kind === 'lightocr' || kind === 'lexiscan') && Array.isArray(d.docs) ? (
             <>
               <div className="demo-label">Processed documents</div>
               <div className="demo-rows">
@@ -123,7 +123,7 @@ export default function ProductDemo({ demo, productName }) {
                 ))}
               </div>
             </>
-          ) : kind === 'moina' && Array.isArray(d.messages) ? (
+          ) : (kind === 'moina' || kind === 'vocalis') && Array.isArray(d.messages) ? (
             <>
               <div className="demo-voices">
                 {d.messages.slice(0, 3).map((msg, idx) => (
@@ -153,7 +153,7 @@ export default function ProductDemo({ demo, productName }) {
                 </div>
               )}
             </>
-          ) : kind === 'bms' && Array.isArray(d.protocols) ? (
+          ) : (kind === 'bms' || kind === 'cybergrid') && Array.isArray(d.protocols) ? (
             <>
               <div className="demo-label">{d.subtitle || 'Open protocols'}</div>
               <div className="demo-chips">

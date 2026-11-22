@@ -43,14 +43,14 @@ export default function Contact() {
   return (
     <section id="contact" className="section">
       <div className="contact-wrap">
-        <div className="section-head center reveal revealed">
-          <span className="section-tag">{settings.contact_badge || 'GET IN TOUCH'}</span>
-          <h2 className="section-title">{settings.contact_title || "Let's Build Intelligence Together"}</h2>
+        <div className="section-head center reveal">
+          <span className="section-tag">{settings.contact_badge || 'INITIATE DIALOGUE'}</span>
+          <h2 className="section-title">{settings.contact_title || 'Architect Your Sovereign AI Roadmap'}</h2>
           <p className="section-desc">{settings.contact_sub || ''}</p>
         </div>
 
         <div className="contact-grid">
-          <div className="contact-info reveal revealed">
+          <div className="contact-info reveal reveal-left">
             <div className="contact-cards">
               <div className="contact-card">
                 <span className="ct-ic">
@@ -116,8 +116,8 @@ export default function Contact() {
             </div>
           </div>
 
-          <div className="contact-form-card reveal reveal-delay-1 revealed">
-            <h3>{settings.contact_form_title || 'Send a Message'}</h3>
+          <div className="contact-form-card reveal reveal-right">
+            <h3>{settings.contact_form_title || 'Submit Technical Inquiry'}</h3>
 
             {statusMessage && (
               <div className="alert-box">

@@ -13,13 +13,13 @@ export default function Services({ onSelectService }) {
   return (
     <section id="services" className="section-alt">
       <div className="services-wrap">
-        <div className="section-head center reveal revealed">
-          <span className="section-tag">{settings.services_tag || 'SERVICES'}</span>
-          <h2 className="section-title">{settings.services_title || 'What We Do For You'}</h2>
+        <div className="section-head center reveal">
+          <span className="section-tag">{settings.services_tag || 'CAPABILITIES & SOLUTIONS'}</span>
+          <h2 className="section-title">{settings.services_title || 'Enterprise Engineering Capabilities'}</h2>
           <p className="section-desc">{settings.services_sub || ''}</p>
         </div>
 
-        <div className="services-panel reveal revealed" data-services-panel="true">
+        <div className="services-panel reveal" data-services-panel="true">
           <div className="services-tabs">
             {services.map((service, index) => (
               <button

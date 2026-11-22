@@ -19,29 +19,42 @@ export default function Home({ onSelectService, onNavigate }) {
     };
     window.addEventListener('scroll', handleScroll, { passive: true });
 
-    // Setup reveal observer
-    const revealEls = document.querySelectorAll('.reveal');
-    if ('IntersectionObserver' in window) {
-      const observer = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-              entry.target.classList.add('revealed');
-              observer.unobserve(entry.target);
-            }
-          });
-        },
-        { threshold: 0.08, rootMargin: '0px 0px -20px 0px' }
-      );
-      revealEls.forEach((el) => observer.observe(el));
-      return () => {
-        window.removeEventListener('scroll', handleScroll);
-        observer.disconnect();
-      };
-    } else {
-      revealEls.forEach((el) => el.classList.add('revealed'));
+    // Setup high-performance scroll reveal observer with MutationObserver
+    if (!('IntersectionObserver' in window)) {
+      document.querySelectorAll('.reveal').forEach((el) => el.classList.add('revealed'));
       return () => window.removeEventListener('scroll', handleScroll);
     }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('revealed');
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.08, rootMargin: '0px 0px -30px 0px' }
+    );
+
+    const observeAll = () => {
+      const els = document.querySelectorAll('.reveal:not(.revealed)');
+      els.forEach((el) => observer.observe(el));
+    };
+
+    observeAll();
+
+    // Observe future DOM insertions from async API data loads
+    const mo = new MutationObserver(() => {
+      observeAll();
+    });
+    mo.observe(document.body, { childList: true, subtree: true });
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      observer.disconnect();
+      mo.disconnect();
+    };
   }, []);
 
   const scrollToTop = () => {
