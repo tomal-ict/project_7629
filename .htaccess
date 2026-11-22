@@ -1,10 +1,38 @@
+# ABC AI System Limited — Root Web Router
+# Pure HTML/SPA Entry Configuration
+
+<IfModule mod_dir.c>
+    DirectoryIndex index.html
+</IfModule>
+
 <IfModule mod_rewrite.c>
     RewriteEngine On
 
-    # If the request already points inside public/, let Apache serve it directly.
-    RewriteCond %{REQUEST_URI} /public/
+    # Security: Disallow directory browsing
+    <IfModule mod_negotiation.c>
+        Options -Indexes
+    </IfModule>
+
+    # Strip PHP & Server signatures
+    <IfModule mod_headers.c>
+        Header unset X-Powered-By
+        Header always unset X-Powered-By
+    </IfModule>
+
+    # Block sensitive files from browser access
+    RewriteRule ^(\.git|\.env|composer\.|package\.|phpunit\.xml) - [F,L]
+    RewriteRule ^backend/(\.env|storage/logs/.*|artisan|composer\.) - [F,L]
+
+    # Route backend API requests to Laravel API bus
+    RewriteRule ^api/(.*)$ backend/public/index.php [QSA,L]
+
+    # Route static assets to backend/public/
+    RewriteRule ^(assets|css|js|images)/(.*)$ backend/public/$1/$2 [L]
+
+    # If the requested static file exists in root (e.g. index.html), serve it directly
+    RewriteCond %{REQUEST_FILENAME} -f
     RewriteRule ^ - [L]
 
-    # Everything else goes through the Laravel public directory (front controller).
-    RewriteRule ^(.*)$ public/$1 [L]
+    # SPA Fallback for all other frontend web routes
+    RewriteRule ^ index.html [L]
 </IfModule>
