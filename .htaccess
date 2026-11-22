@@ -1,14 +1,19 @@
-# ABC AI System Limited — Root Web Router
-# Pure HTML/SPA Entry Configuration
+# ============================================================
+# ABC AI System Limited — Universal Web Router (cPanel / Apache / LiteSpeed)
+# ============================================================
 
 <IfModule mod_dir.c>
-    DirectoryIndex index.html
+    DirectoryIndex index.html index.php
 </IfModule>
 
 <IfModule mod_rewrite.c>
     RewriteEngine On
 
-    # Security: Disallow directory browsing
+    # Pass Authorization Header to PHP-FPM / FastCGI (Required on cPanel/aaPanel)
+    RewriteCond %{HTTP:Authorization} .
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+    # Prevent directory indexing
     <IfModule mod_negotiation.c>
         Options -Indexes
     </IfModule>
@@ -19,20 +24,21 @@
         Header always unset X-Powered-By
     </IfModule>
 
-    # Block sensitive files from browser access
+    # Protect internal system and environment files
     RewriteRule ^(\.git|\.env|composer\.|package\.|phpunit\.xml) - [F,L]
     RewriteRule ^backend/(\.env|storage/logs/.*|artisan|composer\.) - [F,L]
 
-    # Route backend API requests to Laravel API bus
+    # 1. Route backend API calls directly to Laravel front controller
     RewriteRule ^api/(.*)$ backend/public/index.php [QSA,L]
 
-    # Route static assets to backend/public/
-    RewriteRule ^(assets|css|js|images)/(.*)$ backend/public/$1/$2 [L]
-
-    # If the requested static file exists in root (e.g. index.html), serve it directly
+    # 2. Serve physical static files directly if present
     RewriteCond %{REQUEST_FILENAME} -f
     RewriteRule ^ - [L]
 
-    # SPA Fallback for all other frontend web routes
+    # 3. Fallback to backend/public if asset exists there
+    RewriteCond %{DOCUMENT_ROOT}/backend/public/$1 -f
+    RewriteRule ^(assets|css|js|images)/(.*)$ backend/public/$1/$2 [L]
+
+    # 4. SPA Fallback for all client-side routes
     RewriteRule ^ index.html [L]
 </IfModule>

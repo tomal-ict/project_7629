@@ -1,0 +1,14 @@
+# ============================================================
+# aaPanel / NGINX Configuration (URL Rewrite)
+# ============================================================
+# In aaPanel: Go to Website -> Settings -> "URL rewrite"
+# Paste the following rules and click Save:
+
+location /api {
+    try_files $uri $uri/ /backend/public/index.php?$query_string;
+}
+
+location / {
+    try_files $uri $uri/ /index.html;
+}
+# ============================================================

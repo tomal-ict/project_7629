@@ -9,6 +9,35 @@ if (!headers_sent()) {
     header_remove('X-Powered-By');
 }
 
+// 1. Ensure all critical storage & cache directories exist and are writable
+// This prevents 99% of cPanel / aaPanel permission 500 errors on fresh deployments
+$storageDirs = [
+    __DIR__ . '/../storage/app',
+    __DIR__ . '/../storage/app/public',
+    __DIR__ . '/../storage/framework/cache/data',
+    __DIR__ . '/../storage/framework/sessions',
+    __DIR__ . '/../storage/framework/views',
+    __DIR__ . '/../storage/logs',
+    __DIR__ . '/../bootstrap/cache',
+];
+foreach ($storageDirs as $sDir) {
+    if (!is_dir($sDir)) {
+        @mkdir($sDir, 0775, true);
+    }
+    @chmod($sDir, 0775);
+}
+
+// 2. Synchronize .env between project root and backend folder
+// So if user edits .env in either cPanel public_html root OR backend folder, both work identically!
+$rootEnv = dirname(__DIR__, 2) . '/.env';
+$backendEnv = dirname(__DIR__) . '/.env';
+
+if (file_exists($rootEnv) && !file_exists($backendEnv)) {
+    @copy($rootEnv, $backendEnv);
+} elseif (file_exists($backendEnv) && !file_exists($rootEnv)) {
+    @copy($backendEnv, $rootEnv);
+}
+
 // Determine if the application is in maintenance mode...
 if (file_exists($maintenance = __DIR__.'/../storage/framework/maintenance.php')) {
     require $maintenance;
@@ -21,10 +50,13 @@ require __DIR__.'/../vendor/autoload.php';
 /** @var Application $app */
 $app = require_once __DIR__.'/../bootstrap/app.php';
 
-// Some hosts run this file through a rewrite (e.g. root -> backend/public/).
-// Then SCRIPT_NAME points inside /backend/public while REQUEST_URI keeps the original
-// path, which breaks Laravel's route matching. Normalize both so the project
-// folder itself acts as the base URL, no matter where it is deployed.
+// If root .env exists, prioritize loading from root directory
+if (file_exists($rootEnv)) {
+    $app->useEnvironmentPath(dirname(__DIR__, 2));
+}
+
+// 3. Multi-Host URL & Routing Normalizer
+// Fixes route matching on cPanel Apache, aaPanel Nginx, FastCGI, and subdirectories
 if (PHP_SAPI !== 'cli') {
     $scriptName = $_SERVER['SCRIPT_NAME'] ?? '';
     $suffix = '';
