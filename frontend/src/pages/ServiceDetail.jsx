@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import api from '../services/api';
+import { trackEvent } from '../utils/analytics';
 
 export default function ServiceDetail({ serviceSlug, onBack, onSelectService }) {
   const [service, setService] = useState(null);
@@ -16,6 +17,7 @@ export default function ServiceDetail({ serviceSlug, onBack, onSelectService }) 
         if (res.data && res.data.service) {
           setService(res.data.service);
           setMoreServices(res.data.moreServices || []);
+          trackEvent('view_item', { item_name: res.data.service.title, item_category: 'Service' });
         } else {
           setError('Service not found.');
         }

@@ -27,17 +27,99 @@ class AdminApiController extends Controller
      */
     public function dashboard(): JsonResponse
     {
+        $servicesCount = Service::count();
+        $featuredServices = Service::where('featured_on_home', true)->count();
+        $productsCount = Product::count();
+        $flagshipProducts = Product::where('is_flagship', true)->count();
+        $teamCount = TeamMember::count();
+        $advisorsCount = TeamMember::where('category', 'advisor')->count();
+        $clientsCount = Client::count();
+        $officialClients = Client::where('group', 'clients')->count();
+        $messagesCount = ContactMessage::count();
+        $unreadMessages = ContactMessage::where('is_read', false)->count();
+        $industriesCount = Industry::count();
+        $techDomainsCount = TechDomain::count();
+        $advantagesCount = Advantage::count();
+        $methodologiesCount = Methodology::count();
+        $statisticsCount = Statistic::count();
+        $coreValuesCount = CoreValue::count();
+        $comparisonsCount = Comparison::count();
+        $settingsCount = Setting::count();
+
+        // Monthly inquiry activity (last 6 months including current)
+        $inquiriesTrend = [];
+        for ($i = 5; $i >= 0; $i--) {
+            $monthStart = now()->subMonths($i)->startOfMonth();
+            $monthEnd = (clone $monthStart)->endOfMonth();
+            $total = ContactMessage::whereBetween('created_at', [$monthStart, $monthEnd])->count();
+            $unread = ContactMessage::whereBetween('created_at', [$monthStart, $monthEnd])
+                ->where('is_read', false)
+                ->count();
+
+            $inquiriesTrend[] = [
+                'label' => $monthStart->format('M Y'),
+                'short' => $monthStart->format('M'),
+                'total' => $total,
+                'unread' => $unread,
+            ];
+        }
+
+        // SEO readiness summary
+        $allSettings = Setting::allAsArray();
+        $seoTitleOk = mb_strlen(trim((string) ($allSettings['seo_site_title'] ?? ''))) >= 20;
+        $seoDescOk = mb_strlen(trim((string) ($allSettings['seo_meta_description'] ?? ''))) >= 60;
+        $seoOgOk = trim((string) ($allSettings['seo_og_image'] ?? '')) !== '';
+        $ga4Connected = trim((string) ($allSettings['ga4_measurement_id'] ?? '')) !== '';
+        $gtmConnected = trim((string) ($allSettings['gtm_container_id'] ?? '')) !== '';
+        $gscConnected = trim((string) ($allSettings['google_site_verification'] ?? '')) !== '';
+        $servicesWithSeo = Service::whereNotNull('seo_title')
+            ->where('seo_title', '!=', '')
+            ->count();
+
+        $seoChecksPassed = 2 // Sitemap + JSON-LD always active
+            + ($seoTitleOk ? 1 : 0)
+            + ($seoDescOk ? 1 : 0)
+            + ($seoOgOk ? 1 : 0)
+            + (($ga4Connected || $gtmConnected) ? 1 : 0)
+            + ($gscConnected ? 1 : 0);
+        $seoScore = (int) round(($seoChecksPassed / 7) * 100);
+
         return response()->json([
             'success' => true,
             'counts' => [
-                'services' => Service::count(),
-                'products' => Product::count(),
-                'team_members' => TeamMember::count(),
-                'clients' => Client::count(),
-                'messages' => ContactMessage::count(),
-                'unread_messages' => ContactMessage::where('is_read', false)->count(),
-                'industries' => Industry::count(),
-                'tech_domains' => TechDomain::count(),
+                'services' => $servicesCount,
+                'featured_services' => $featuredServices,
+                'products' => $productsCount,
+                'flagship_products' => $flagshipProducts,
+                'ecosystem_products' => max(0, $productsCount - $flagshipProducts),
+                'team_members' => $teamCount,
+                'advisors' => $advisorsCount,
+                'core_team' => max(0, $teamCount - $advisorsCount),
+                'clients' => $clientsCount,
+                'official_clients' => $officialClients,
+                'pilot_clients' => max(0, $clientsCount - $officialClients),
+                'messages' => $messagesCount,
+                'unread_messages' => $unreadMessages,
+                'read_messages' => max(0, $messagesCount - $unreadMessages),
+                'industries' => $industriesCount,
+                'tech_domains' => $techDomainsCount,
+                'advantages' => $advantagesCount,
+                'methodologies' => $methodologiesCount,
+                'statistics' => $statisticsCount,
+                'core_values' => $coreValuesCount,
+                'comparisons' => $comparisonsCount,
+                'settings' => $settingsCount,
+                'total_pages' => 10,
+                'total_indexable' => 10 + $servicesCount,
+            ],
+            'inquiries_trend' => $inquiriesTrend,
+            'seo_summary' => [
+                'score' => $seoScore,
+                'ga4_connected' => $ga4Connected,
+                'gtm_connected' => $gtmConnected,
+                'gsc_connected' => $gscConnected,
+                'services_with_seo' => $servicesWithSeo,
+                'total_services' => $servicesCount,
             ],
             'recent_messages' => ContactMessage::latest()->take(5)->get(),
         ]);
@@ -60,25 +142,84 @@ class AdminApiController extends Controller
     {
         $setting = Setting::findOrFail($id);
         $validated = $request->validate([
+            'group' => ['nullable', 'string', 'max:100'],
+            'key' => ['nullable', 'string', 'max:150'],
             'value' => ['nullable'],
         ]);
 
-        $setting->update($validated);
+        $setting->update(array_filter($validated, fn ($v) => $v !== null || $v === ''));
 
         return response()->json(['success' => true, 'message' => 'Setting updated successfully.', 'setting' => $setting]);
+    }
+
+    public function storeSetting(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'group' => ['required', 'string', 'max:100'],
+            'key' => ['required', 'string', 'max:150'],
+            'value' => ['nullable'],
+        ]);
+
+        $setting = Setting::set($validated['key'], $validated['value'] ?? '', $validated['group']);
+
+        return response()->json(['success' => true, 'message' => 'Setting saved successfully.', 'setting' => $setting], 201);
+    }
+
+    public function deleteSetting(int $id): JsonResponse
+    {
+        Setting::findOrFail($id)->delete();
+        return response()->json(['success' => true, 'message' => 'Setting deleted successfully.']);
     }
 
     public function bulkUpdateSettings(Request $request): JsonResponse
     {
         $settings = $request->input('settings', []);
+        $groups = $request->input('groups', []);
+
         foreach ($settings as $key => $val) {
-            Setting::set($key, is_array($val) ? json_encode($val) : (string)$val);
+            $existing = Setting::where('key', $key)->first();
+            $group = $groups[$key] ?? ($existing ? $existing->group : 'general');
+            $formatted = is_array($val)
+                ? json_encode($val, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)
+                : (string)($val ?? '');
+
+            Setting::set($key, $formatted, $group);
         }
 
         return response()->json([
             'success' => true,
             'message' => 'Settings updated successfully.',
             'settings' => Setting::allAsArray(),
+        ]);
+    }
+
+    /**
+     * Upload an image to public/images/uploads and return its relative web path.
+     */
+    public function uploadImage(Request $request): JsonResponse
+    {
+        $request->validate([
+            'image' => ['required', 'file', 'mimes:jpg,jpeg,png,webp,gif,svg', 'max:5120'],
+        ]);
+
+        $file = $request->file('image');
+        $ext = strtolower($file->getClientOriginalExtension() ?: 'png');
+        $baseName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+        $safeBase = Str::slug($baseName) ?: 'image';
+        $filename = time() . '_' . Str::random(6) . '_' . $safeBase . '.' . $ext;
+
+        $uploadDir = public_path('images/uploads');
+        if (!is_dir($uploadDir)) {
+            mkdir($uploadDir, 0755, true);
+        }
+
+        $file->move($uploadDir, $filename);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Image uploaded successfully.',
+            'filename' => $filename,
+            'url' => './images/uploads/' . $filename,
         ]);
     }
 
@@ -109,7 +250,13 @@ class AdminApiController extends Controller
             'usecases' => ['nullable'],
             'stats' => ['nullable'],
             'steps' => ['nullable'],
+            'hero_image' => ['nullable', 'string'],
+            'gallery_images' => ['nullable'],
             'why_us' => ['nullable', 'string'],
+            'seo_title' => ['nullable', 'string', 'max:255'],
+            'seo_description' => ['nullable', 'string'],
+            'seo_keywords' => ['nullable', 'string'],
+            'seo_og_image' => ['nullable', 'string'],
             'featured_on_home' => ['nullable', 'boolean'],
             'sort_order' => ['nullable', 'integer'],
         ]);
@@ -142,7 +289,13 @@ class AdminApiController extends Controller
             'usecases' => ['nullable'],
             'stats' => ['nullable'],
             'steps' => ['nullable'],
+            'hero_image' => ['nullable', 'string'],
+            'gallery_images' => ['nullable'],
             'why_us' => ['nullable', 'string'],
+            'seo_title' => ['nullable', 'string', 'max:255'],
+            'seo_description' => ['nullable', 'string'],
+            'seo_keywords' => ['nullable', 'string'],
+            'seo_og_image' => ['nullable', 'string'],
             'featured_on_home' => ['nullable', 'boolean'],
             'sort_order' => ['nullable', 'integer'],
         ]);
@@ -297,8 +450,7 @@ class AdminApiController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'group' => ['required', 'in:clients,pilots'],
             'logo' => ['nullable', 'string'],
-            'website' => ['nullable', 'string'],
-            'description' => ['nullable', 'string'],
+            'accent' => ['nullable', 'string', 'max:32'],
             'sort_order' => ['nullable', 'integer'],
         ]);
 
@@ -313,8 +465,7 @@ class AdminApiController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'group' => ['required', 'in:clients,pilots'],
             'logo' => ['nullable', 'string'],
-            'website' => ['nullable', 'string'],
-            'description' => ['nullable', 'string'],
+            'accent' => ['nullable', 'string', 'max:32'],
             'sort_order' => ['nullable', 'integer'],
         ]);
 
@@ -341,7 +492,6 @@ class AdminApiController extends Controller
         $data = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'icon' => ['nullable', 'string'],
-            'description' => ['nullable', 'string'],
             'sort_order' => ['nullable', 'integer'],
         ]);
         $item = Industry::create($data);
@@ -354,7 +504,6 @@ class AdminApiController extends Controller
         $data = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'icon' => ['nullable', 'string'],
-            'description' => ['nullable', 'string'],
             'sort_order' => ['nullable', 'integer'],
         ]);
         $item->update($data);
@@ -378,13 +527,19 @@ class AdminApiController extends Controller
     public function storeTechDomain(Request $request): JsonResponse
     {
         $data = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
+            'title' => ['nullable', 'string', 'max:255'],
+            'name' => ['nullable', 'string', 'max:255'],
             'icon' => ['nullable', 'string'],
             'description' => ['nullable', 'string'],
-            'features' => ['nullable'],
             'sort_order' => ['nullable', 'integer'],
         ]);
-        $item = TechDomain::create($data);
+        $payload = [
+            'title' => $data['title'] ?? $data['name'] ?? 'Untitled Domain',
+            'icon' => $data['icon'] ?? '🤖',
+            'description' => $data['description'] ?? '',
+            'sort_order' => $data['sort_order'] ?? 0,
+        ];
+        $item = TechDomain::create($payload);
         return response()->json(['success' => true, 'message' => 'Tech Domain created.', 'tech_domain' => $item], 201);
     }
 
@@ -392,13 +547,18 @@ class AdminApiController extends Controller
     {
         $item = TechDomain::findOrFail($id);
         $data = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
+            'title' => ['nullable', 'string', 'max:255'],
+            'name' => ['nullable', 'string', 'max:255'],
             'icon' => ['nullable', 'string'],
             'description' => ['nullable', 'string'],
-            'features' => ['nullable'],
             'sort_order' => ['nullable', 'integer'],
         ]);
-        $item->update($data);
+        $item->update([
+            'title' => $data['title'] ?? $data['name'] ?? $item->title,
+            'icon' => $data['icon'] ?? $item->icon,
+            'description' => $data['description'] ?? $item->description,
+            'sort_order' => $data['sort_order'] ?? $item->sort_order,
+        ]);
         return response()->json(['success' => true, 'message' => 'Tech Domain updated.', 'tech_domain' => $item]);
     }
 
@@ -460,11 +620,9 @@ class AdminApiController extends Controller
     public function storeMethodology(Request $request): JsonResponse
     {
         $data = $request->validate([
-            'phase' => ['required', 'string', 'max:255'],
             'title' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
-            'activities' => ['nullable'],
-            'deliverables' => ['nullable'],
+            'icon' => ['nullable', 'string'],
             'sort_order' => ['nullable', 'integer'],
         ]);
         $item = Methodology::create($data);
@@ -475,11 +633,9 @@ class AdminApiController extends Controller
     {
         $item = Methodology::findOrFail($id);
         $data = $request->validate([
-            'phase' => ['required', 'string', 'max:255'],
             'title' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
-            'activities' => ['nullable'],
-            'deliverables' => ['nullable'],
+            'icon' => ['nullable', 'string'],
             'sort_order' => ['nullable', 'integer'],
         ]);
         $item->update($data);
@@ -505,8 +661,7 @@ class AdminApiController extends Controller
         $data = $request->validate([
             'label' => ['required', 'string', 'max:255'],
             'value' => ['required', 'string', 'max:255'],
-            'suffix' => ['nullable', 'string'],
-            'icon' => ['nullable', 'string'],
+            'sub' => ['nullable', 'string'],
             'sort_order' => ['nullable', 'integer'],
         ]);
         $item = Statistic::create($data);
@@ -519,8 +674,7 @@ class AdminApiController extends Controller
         $data = $request->validate([
             'label' => ['required', 'string', 'max:255'],
             'value' => ['required', 'string', 'max:255'],
-            'suffix' => ['nullable', 'string'],
-            'icon' => ['nullable', 'string'],
+            'sub' => ['nullable', 'string'],
             'sort_order' => ['nullable', 'integer'],
         ]);
         $item->update($data);
@@ -531,6 +685,84 @@ class AdminApiController extends Controller
     {
         Statistic::findOrFail($id)->delete();
         return response()->json(['success' => true, 'message' => 'Statistic deleted.']);
+    }
+
+    // ==========================================
+    // CORE VALUES
+    // ==========================================
+    public function getCoreValues(): JsonResponse
+    {
+        return response()->json(['success' => true, 'core_values' => CoreValue::orderBy('sort_order')->get()]);
+    }
+
+    public function storeCoreValue(Request $request): JsonResponse
+    {
+        $data = $request->validate([
+            'title' => ['required', 'string', 'max:255'],
+            'description' => ['required', 'string'],
+            'icon' => ['nullable', 'string'],
+            'sort_order' => ['nullable', 'integer'],
+        ]);
+        $item = CoreValue::create($data);
+        return response()->json(['success' => true, 'message' => 'Core value created.', 'core_value' => $item], 201);
+    }
+
+    public function updateCoreValue(Request $request, int $id): JsonResponse
+    {
+        $item = CoreValue::findOrFail($id);
+        $data = $request->validate([
+            'title' => ['required', 'string', 'max:255'],
+            'description' => ['required', 'string'],
+            'icon' => ['nullable', 'string'],
+            'sort_order' => ['nullable', 'integer'],
+        ]);
+        $item->update($data);
+        return response()->json(['success' => true, 'message' => 'Core value updated.', 'core_value' => $item]);
+    }
+
+    public function deleteCoreValue(int $id): JsonResponse
+    {
+        CoreValue::findOrFail($id)->delete();
+        return response()->json(['success' => true, 'message' => 'Core value deleted.']);
+    }
+
+    // ==========================================
+    // COMPARISONS
+    // ==========================================
+    public function getComparisons(): JsonResponse
+    {
+        return response()->json(['success' => true, 'comparisons' => Comparison::orderBy('sort_order')->get()]);
+    }
+
+    public function storeComparison(Request $request): JsonResponse
+    {
+        $data = $request->validate([
+            'feature' => ['required', 'string', 'max:255'],
+            'us_value' => ['required', 'string', 'max:255'],
+            'them_value' => ['required', 'string', 'max:255'],
+            'sort_order' => ['nullable', 'integer'],
+        ]);
+        $item = Comparison::create($data);
+        return response()->json(['success' => true, 'message' => 'Comparison created.', 'comparison' => $item], 201);
+    }
+
+    public function updateComparison(Request $request, int $id): JsonResponse
+    {
+        $item = Comparison::findOrFail($id);
+        $data = $request->validate([
+            'feature' => ['required', 'string', 'max:255'],
+            'us_value' => ['required', 'string', 'max:255'],
+            'them_value' => ['required', 'string', 'max:255'],
+            'sort_order' => ['nullable', 'integer'],
+        ]);
+        $item->update($data);
+        return response()->json(['success' => true, 'message' => 'Comparison updated.', 'comparison' => $item]);
+    }
+
+    public function deleteComparison(int $id): JsonResponse
+    {
+        Comparison::findOrFail($id)->delete();
+        return response()->json(['success' => true, 'message' => 'Comparison deleted.']);
     }
 
     // ==========================================

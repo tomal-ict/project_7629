@@ -46,6 +46,12 @@ api.interceptors.request.use(
       config.headers['Authorization'] = `Bearer ${token}`;
     }
 
+    // Skip encryption for FormData (multipart file uploads)
+    if (config.data instanceof FormData) {
+      delete config.headers['Content-Type'];
+      return config;
+    }
+
     // Encrypt request body for mutation methods (POST, PUT, PATCH)
     const method = (config.method || '').toLowerCase();
     if (['post', 'put', 'patch'].includes(method) && config.data) {

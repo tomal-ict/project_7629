@@ -1,13 +1,20 @@
 import React from 'react';
 import { useAuth } from '../../context/AuthContext';
+import { useSite } from '../../context/SiteContext';
 
 export default function AdminLayout({ activeTab, onTabChange, onExitAdmin, children }) {
   const { user, logout } = useAuth();
+  const siteCtx = useSite();
+  const settings = siteCtx?.settings || {};
 
   const getTitle = () => {
     switch (activeTab) {
       case 'dashboard':
         return 'Dashboard Overview';
+      case 'pages':
+        return 'Manage Website Pages';
+      case 'seo':
+        return 'SEO & Google Analytics';
       case 'messages':
         return 'Contact Inquiries Inbox';
       case 'services':
@@ -39,7 +46,7 @@ export default function AdminLayout({ activeTab, onTabChange, onExitAdmin, child
     <div className="a-layout">
       <aside className="a-sidebar">
         <div className="a-brand">
-          <img src="./images/logo.svg" alt="ABC AI System Limited" />
+          <img src={settings.site_logo || './images/logo.svg'} alt={settings.company_name || 'ABC AI System Limited'} />
           <div className="ab-txt">
             ABC AI System<small>ADMIN PANEL</small>
           </div>
@@ -62,6 +69,24 @@ export default function AdminLayout({ activeTab, onTabChange, onExitAdmin, child
               <rect width="7" height="5" x="3" y="16" rx="1" />
             </svg>
             Dashboard
+          </a>
+
+          <a
+            href="#pages"
+            onClick={(e) => {
+              e.preventDefault();
+              onTabChange('pages');
+            }}
+            className={activeTab === 'pages' ? 'active' : ''}
+          >
+            <svg className="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
+              <polyline points="14 2 14 8 20 8" />
+              <line x1="16" x2="8" y1="13" y2="13" />
+              <line x1="16" x2="8" y1="17" y2="17" />
+              <line x1="10" x2="8" y1="9" y2="9" />
+            </svg>
+            Pages
           </a>
 
           <div className="a-label">Inbox</div>
@@ -172,6 +197,22 @@ export default function AdminLayout({ activeTab, onTabChange, onExitAdmin, child
           </a>
 
           <div className="a-label">System</div>
+          <a
+            href="#seo"
+            onClick={(e) => {
+              e.preventDefault();
+              onTabChange('seo');
+            }}
+            className={activeTab === 'seo' ? 'active' : ''}
+          >
+            <svg className="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="11" cy="11" r="8" />
+              <path d="m21 21-4.3-4.3" />
+              <path d="M11 7v8" />
+              <path d="M7 11h8" />
+            </svg>
+            SEO &amp; Analytics
+          </a>
           <a
             href="#settings"
             onClick={(e) => {

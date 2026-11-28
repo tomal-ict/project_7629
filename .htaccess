@@ -31,12 +31,17 @@
     # 1. Route backend API calls directly to Laravel front controller
     RewriteRule ^api/(.*)$ backend/public/index.php [QSA,L]
 
+    # 1b. Route SEO endpoints (sitemap.xml, robots.txt) and clean page routes to Laravel for SSR SEO meta
+    RewriteRule ^(sitemap\.xml|robots\.txt)$ backend/public/index.php [QSA,L]
+    RewriteRule ^(about|services(/.*)?|products|technology|industries|leadership|methodology|contact)$ backend/public/index.php [QSA,L]
+    RewriteRule ^$ backend/public/index.php [QSA,L]
+
     # 2. Serve physical static files directly if present
     RewriteCond %{REQUEST_FILENAME} -f
     RewriteRule ^ - [L]
 
-    # 3. Fallback to backend/public if asset exists there
-    RewriteCond %{DOCUMENT_ROOT}/backend/public/$1 -f
+    # 3. Serve frontend static assets from backend/public (works in root domain & subdirectories)
+    RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^(assets|css|js|images)/(.*)$ backend/public/$1/$2 [L]
 
     # 4. SPA Fallback for all client-side routes

@@ -4,6 +4,8 @@ import { useSite } from '../context/SiteContext';
 export default function Leadership() {
   const { settings, advisors, coreTeam, founderQuotes } = useSite();
 
+  const isImagePath = (val) => typeof val === 'string' && /^(\.\/|\/|https?:\/\/)/i.test(val.trim());
+
   const getInitials = (name) => {
     return (name || '')
       .trim()
@@ -34,7 +36,15 @@ export default function Leadership() {
                     style={{ transitionDelay: `${(idx % 4) * 90}ms` }}
                   >
                     <div className="member-photo">
-                      <span className="avatar-init">{getInitials(member.name)}</span>
+                      {isImagePath(member.photo) ? (
+                        <img
+                          src={member.photo}
+                          alt={member.name}
+                          style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 'inherit' }}
+                        />
+                      ) : (
+                        <span className="avatar-init">{getInitials(member.name)}</span>
+                      )}
                     </div>
                     <div className="member-body">
                       <h4>{member.name}</h4>
@@ -67,7 +77,15 @@ export default function Leadership() {
                     style={{ transitionDelay: `${(idx % 4) * 90}ms` }}
                   >
                     <div className="member-photo">
-                      <span className="avatar-init">{getInitials(member.name)}</span>
+                      {isImagePath(member.photo) ? (
+                        <img
+                          src={member.photo}
+                          alt={member.name}
+                          style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 'inherit' }}
+                        />
+                      ) : (
+                        <span className="avatar-init">{getInitials(member.name)}</span>
+                      )}
                     </div>
                     <div className="member-body">
                       <h4>{member.name}</h4>
@@ -115,8 +133,16 @@ export default function Leadership() {
               ))}
             </blockquote>
             <div className="fb-by">
-              <span className="fb-avatar">
-                {getInitials(settings.founder_quote_by || 'Tariqul Islam')}
+              <span className="fb-avatar" style={{ overflow: 'hidden' }}>
+                {settings.founder_image ? (
+                  <img
+                    src={settings.founder_image}
+                    alt={settings.founder_quote_by || 'Founder'}
+                    style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 'inherit' }}
+                  />
+                ) : (
+                  getInitials(settings.founder_quote_by || 'Tariqul Islam')
+                )}
               </span>
               <div>
                 <strong>{settings.founder_quote_by || 'Tariqul Islam, Managing Director & Chief Architect'}</strong>

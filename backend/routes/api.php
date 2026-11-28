@@ -35,22 +35,25 @@ Route::prefix('auth')->group(function () {
 // Admin Protected API
 Route::middleware('auth.api_token')->prefix('admin')->group(function () {
     Route::get('/dashboard', [AdminApiController::class, 'dashboard']);
+    Route::post('/upload', [AdminApiController::class, 'uploadImage']);
 
     // Settings
     Route::get('/settings', [AdminApiController::class, 'getSettings']);
-    Route::put('/settings/{id}', [AdminApiController::class, 'updateSetting']);
+    Route::post('/settings', [AdminApiController::class, 'storeSetting']);
+    Route::match(['put', 'patch'], '/settings/{id}', [AdminApiController::class, 'updateSetting']);
+    Route::delete('/settings/{id}', [AdminApiController::class, 'deleteSetting']);
     Route::post('/settings/bulk', [AdminApiController::class, 'bulkUpdateSettings']);
 
     // Services
     Route::get('/services', [AdminApiController::class, 'getServices']);
     Route::post('/services', [AdminApiController::class, 'storeService']);
-    Route::put('/services/{id}', [AdminApiController::class, 'updateService']);
+    Route::match(['put', 'patch'], '/services/{id}', [AdminApiController::class, 'updateService']);
     Route::delete('/services/{id}', [AdminApiController::class, 'deleteService']);
 
     // Products
     Route::get('/products', [AdminApiController::class, 'getProducts']);
     Route::post('/products', [AdminApiController::class, 'storeProduct']);
-    Route::put('/products/{id}', [AdminApiController::class, 'updateProduct']);
+    Route::match(['put', 'patch'], '/products/{id}', [AdminApiController::class, 'updateProduct']);
     Route::delete('/products/{id}', [AdminApiController::class, 'deleteProduct']);
 
     // Team Members
@@ -94,6 +97,18 @@ Route::middleware('auth.api_token')->prefix('admin')->group(function () {
     Route::post('/statistics', [AdminApiController::class, 'storeStatistic']);
     Route::put('/statistics/{id}', [AdminApiController::class, 'updateStatistic']);
     Route::delete('/statistics/{id}', [AdminApiController::class, 'deleteStatistic']);
+
+    // Core Values
+    Route::get('/core-values', [AdminApiController::class, 'getCoreValues']);
+    Route::post('/core-values', [AdminApiController::class, 'storeCoreValue']);
+    Route::put('/core-values/{id}', [AdminApiController::class, 'updateCoreValue']);
+    Route::delete('/core-values/{id}', [AdminApiController::class, 'deleteCoreValue']);
+
+    // Comparisons
+    Route::get('/comparisons', [AdminApiController::class, 'getComparisons']);
+    Route::post('/comparisons', [AdminApiController::class, 'storeComparison']);
+    Route::put('/comparisons/{id}', [AdminApiController::class, 'updateComparison']);
+    Route::delete('/comparisons/{id}', [AdminApiController::class, 'deleteComparison']);
 
     // Messages
     Route::get('/messages', [AdminApiController::class, 'getMessages']);

@@ -22,7 +22,7 @@ export default function Footer({ onNavigate }) {
             className="nav-logo"
           >
             <img
-              src="./images/logo.svg"
+              src={settings.site_logo || './images/logo.svg'}
               alt={settings.company_name || 'ABC AI System'}
               style={{ filter: 'brightness(0) invert(1)', opacity: 0.95 }}
             />

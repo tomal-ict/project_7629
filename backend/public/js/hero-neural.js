@@ -25,9 +25,6 @@
     var ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    var reduced = false;
-    try { reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
-
     var DPR = Math.min(window.devicePixelRatio || 1, 2);
     var W = 468, H = 468, CX = 234, CY = 236, R = 154;
     var running = false, raf = 0, startT = 0, tick = 0;
@@ -553,7 +550,6 @@
       CX = W / 2;
       CY = H / 2 + H * 0.015;
       R = Math.min(W, H) * 0.33;
-      if (reduced) render(0);
     }
 
     buildLattice();
@@ -561,7 +557,7 @@
     resize();
 
     var io = null;
-    if (window.IntersectionObserver && !reduced) {
+    if (window.IntersectionObserver) {
       io = new IntersectionObserver(function (entries) {
         entries.forEach(function (entry) {
           var vis = entry.isIntersecting && !document.hidden;
@@ -570,12 +566,8 @@
         });
       }, { threshold: 0.05 });
       io.observe(canvas);
-      setTimeout(startNow, 400);
-    } else if (!reduced) {
-      startNow();
-    } else {
-      render(0);
     }
+    startNow();
 
     function onPointerMove(e) {
       var r = canvas.getBoundingClientRect();

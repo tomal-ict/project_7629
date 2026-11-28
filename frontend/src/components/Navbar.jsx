@@ -43,7 +43,7 @@ export default function Navbar({ onNavigate, currentView }) {
           }}
           className="nav-logo"
         >
-          <img src="./images/logo.svg" alt={settings.company_name || 'ABC AI System'} />
+          <img src={settings.site_logo || './images/logo.svg'} alt={settings.company_name || 'ABC AI System'} />
         </a>
         <span className="nav-divider"></span>
         <nav className={`nav-links-wrapper ${mobileOpen ? 'open' : ''}`}>

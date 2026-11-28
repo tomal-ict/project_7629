@@ -9,7 +9,8 @@ class Service extends Model
     protected $fillable = [
         'slug', 'title', 'subtitle', 'icon', 'color', 'color_light', 'intro', 'description',
         'features', 'benefits', 'usecases', 'hero_image', 'gallery_images', 'stats', 'steps',
-        'why_us', 'featured_on_home', 'sort_order',
+        'why_us', 'seo_title', 'seo_description', 'seo_keywords', 'seo_og_image',
+        'featured_on_home', 'sort_order',
     ];
 
     protected $casts = [

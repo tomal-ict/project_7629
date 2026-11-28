@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useSite } from '../context/SiteContext';
 import ProductDemo from './ProductDemo';
 
+const isImagePath = (val) => typeof val === 'string' && /^(\.\/|\/|https?:\/\/)/i.test(val.trim());
+
 const mpIcons = {
   'Nexus Cognitive Executive': '🎙️',
   'VaniTrade Terminal': '🗣️',
@@ -44,6 +46,13 @@ export default function Products() {
         <div className="product-slide active">
           <div className="product-slide-grid">
             <div className="product-copy">
+              {isImagePath(currentProduct.logo) && (
+                <img
+                  src={currentProduct.logo}
+                  alt={currentProduct.name}
+                  style={{ width: '48px', height: '48px', objectFit: 'contain', borderRadius: '10px', marginBottom: '12px' }}
+                />
+              )}
               {currentProduct.tag && <span className="pc-tag">{currentProduct.tag}</span>}
               <h3>{currentProduct.name}</h3>
               {currentProduct.metric && <div className="pc-metric">{currentProduct.metric}</div>}
@@ -126,7 +135,17 @@ export default function Products() {
                   className="mp-card reveal"
                   style={{ transitionDelay: `${(idx % 6) * 80}ms` }}
                 >
-                  <div className="mp-logo">{mpIcons[product.name] || '🧩'}</div>
+                  <div className="mp-logo">
+                    {isImagePath(product.logo) ? (
+                      <img
+                        src={product.logo}
+                        alt={product.name}
+                        style={{ width: '40px', height: '40px', objectFit: 'contain', borderRadius: '8px' }}
+                      />
+                    ) : (
+                      mpIcons[product.name] || '🧩'
+                    )}
+                  </div>
                   <h4>{product.name}</h4>
                   {product.tag && <span className="mp-tag">{product.tag}</span>}
                   <p>{product.description}</p>

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useSite } from '../context/SiteContext';
+import { trackEvent } from '../utils/analytics';
 
 export default function Contact() {
   const { settings, sendContact } = useSite();
@@ -27,6 +28,7 @@ export default function Contact() {
     try {
       const res = await sendContact(formData);
       if (res && res.success) {
+        trackEvent('generate_lead', { event_category: 'engagement', event_label: 'contact_form' });
         setStatusMessage(res.message || 'Thank you! Your message has been received. We will get back to you shortly.');
         setFormData({ name: '', email: '', phone: '', company: '', message: '' });
       } else {

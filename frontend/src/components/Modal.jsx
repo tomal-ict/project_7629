@@ -1,53 +1,44 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
-export default function Modal({ isOpen, onClose, title, children }) {
+export default function Modal({ isOpen, onClose, title, subtitle = '', size = 'md', children }) {
+  useEffect(() => {
+    if (!isOpen) return;
+    const onKey = (e) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [isOpen, onClose]);
+
   if (!isOpen) return null;
 
+  const maxW = size === 'lg' ? '860px' : '680px';
+
   return (
-    <div style={{
-      position: 'fixed',
-      inset: 0,
-      zIndex: 999,
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      backgroundColor: 'rgba(15, 23, 42, 0.5)',
-      backdropFilter: 'blur(4px)',
-      padding: '20px'
-    }}>
-      <div style={{
-        background: '#fff',
-        borderRadius: '16px',
-        border: '1px solid #e2e8f0',
-        boxShadow: '0 20px 30px rgba(15, 23, 42, 0.15)',
-        width: '100%',
-        maxWidth: '680px',
-        maxHeight: '90vh',
-        display: 'flex',
-        flexDirection: 'column',
-        overflow: 'hidden'
-      }}>
-        <div style={{
-          padding: '16px 24px',
-          borderBottom: '1px solid #e2e8f0',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between'
-        }}>
-          <h3 style={{ fontSize: '16px', fontWeight: 800, margin: 0, color: '#0f172a' }}>{title}</h3>
+    <div
+      className="a-modal-backdrop"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
+    >
+      <div className="a-modal-dialog" style={{ maxWidth: maxW }}>
+        <div className="a-modal-head">
+          <div>
+            <h3>{title}</h3>
+            {subtitle && <p className="a-muted" style={{ fontSize: '12px', marginTop: '2px' }}>{subtitle}</p>}
+          </div>
           <button
             type="button"
             onClick={onClose}
             className="a-btn sm"
-            style={{ padding: '3px 8px', fontSize: '13px' }}
+            aria-label="Close modal"
+            style={{ padding: '4px 10px', fontSize: '13px' }}
           >
             ✕
           </button>
         </div>
 
-        <div style={{ padding: '24px', overflowY: 'auto' }}>
-          {children}
-        </div>
+        <div className="a-modal-body">{children}</div>
       </div>
     </div>
   );

@@ -4,6 +4,8 @@ import { useSite } from '../context/SiteContext';
 export default function About() {
   const { settings, coreValues, clients, pilots } = useSite();
 
+  const isImagePath = (val) => typeof val === 'string' && /^(\.\/|\/|https?:\/\/)/i.test(val.trim());
+
   const getInitials = (name) => {
     return (name || '')
       .trim()
@@ -54,9 +56,9 @@ export default function About() {
         <div className="about-visual reveal reveal-right">
           <div className="about-visual-img">
             <img
-              src="./images/brain.svg"
+              src={settings.about_image || './images/brain.svg'}
               alt={settings.about_image_caption || 'Proprietary AI Model'}
-              style={{ objectFit: 'contain', padding: '22px', background: 'linear-gradient(135deg,rgba(0,163,137,0.08),rgba(0,128,255,0.08))' }}
+              style={{ objectFit: settings.about_image ? 'cover' : 'contain', padding: settings.about_image ? '0' : '22px', background: 'linear-gradient(135deg,rgba(0,163,137,0.08),rgba(0,128,255,0.08))' }}
             />
           </div>
           <div className="about-overlay">
@@ -140,7 +142,15 @@ export default function About() {
                   >
                     <span className="client-logo-accent"></span>
                     <div className="client-logo-image-wrap">
-                      <span className="cl-init">{getInitials(client.name)}</span>
+                      {isImagePath(client.logo) ? (
+                        <img
+                          src={client.logo}
+                          alt={client.name}
+                          style={{ maxHeight: '34px', maxWidth: '100%', objectFit: 'contain' }}
+                        />
+                      ) : (
+                        <span className="cl-init">{getInitials(client.name)}</span>
+                      )}
                     </div>
                     <span className="client-logo-divider"></span>
                     <span>{client.name}</span>
@@ -165,7 +175,15 @@ export default function About() {
                   >
                     <span className="client-logo-accent"></span>
                     <div className="client-logo-image-wrap">
-                      <span className="cl-init">{getInitials(client.name)}</span>
+                      {isImagePath(client.logo) ? (
+                        <img
+                          src={client.logo}
+                          alt={client.name}
+                          style={{ maxHeight: '34px', maxWidth: '100%', objectFit: 'contain' }}
+                        />
+                      ) : (
+                        <span className="cl-init">{getInitials(client.name)}</span>
+                      )}
                     </div>
                     <span className="client-logo-divider"></span>
                     <span>{client.name}</span>
